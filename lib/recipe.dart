@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-
 class RecipeWidget extends StatefulWidget {
   final Map<String, dynamic> values;
-  final int index;
+  
 
   const RecipeWidget({
     super.key,
     required this.values,
-    required this.index,
+    
   });
 
   @override
@@ -18,17 +17,20 @@ class RecipeWidget extends StatefulWidget {
 }
 
 class _RecipeWidgetState extends State<RecipeWidget> {
-  
   List<Widget> steps = [];
   final page_controller = PageController();
-final ExpansionTileController expansion_tile_first_controller = ExpansionTileController();
+  final ExpansionTileController expansion_tile_first_controller =
+      ExpansionTileController();
+
+  final ExpansionTileController expansionTileSecondController =
+      ExpansionTileController();
   @override
   Widget build(BuildContext context) {
     var recipe_name = widget.values["recipe_name"];
-  var image_url = widget.values["image_url"];
-  var created_by = widget.values["created_by"];
-  var ingerdiants = widget.values["ingredients"];
-  List stepsss = widget.values['steps'];
+    var image_url = widget.values["image_url"];
+    var created_by = widget.values["created_by"];
+    var ingerdiants = widget.values["ingredients"];
+    List stepsss = widget.values['steps'];
     for (var i = 0; i < stepsss.length; i++) {
       steps.add(Text(widget.values['steps'][i]));
     }
@@ -46,27 +48,40 @@ final ExpansionTileController expansion_tile_first_controller = ExpansionTileCon
                 ),
                 onTap: () {
                   if (expansion_tile_first_controller.isExpanded) {
-                  expansion_tile_first_controller.collapse();
-                } else {
-                  expansion_tile_first_controller.expand();
-                }
+                    expansion_tile_first_controller.collapse();
+                    
+                  } else {
+                    expansion_tile_first_controller.expand();
+                    
+                  }
                 },
               ),
               ExpansionTile(
                 controller: expansion_tile_first_controller,
-                title: Text(recipe_name.toString(), style: TextStyle(fontWeight: FontWeight.bold),),
+                title: Text(
+                  recipe_name.toString(),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.black),
+                ),
                 subtitle: Row(
                   children: [
-                    CircleAvatar(),
+                    CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
                     SizedBox(
                       width: 8,
                     ),
-                    Text(created_by.toString(), ),
+                    Text(
+                      created_by.toString(),
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ],
                 ),
                 children: [
                   ExpansionTile(
-                    title: Text("Ingerdiants:", style: TextStyle(fontWeight: FontWeight.bold)),
+                    controller: expansionTileSecondController,
+                    title: Text("Ingerdiants:",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -74,7 +89,11 @@ final ExpansionTileController expansion_tile_first_controller = ExpansionTileCon
                       )
                     ],
                   ),
-                  Text("Steps:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),),
+                  Text(
+                    "Steps:",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+                  ),
                   Center(
                     child: Container(
                       height: 100,
@@ -85,16 +104,20 @@ final ExpansionTileController expansion_tile_first_controller = ExpansionTileCon
                           children: steps,
                         ),
                       ),
-                      
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: SmoothPageIndicator(controller: page_controller, count: stepsss.length, effect: const WormEffect(
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    type: WormType.normal,
-                                  ),),
+                    child: SmoothPageIndicator(
+                      controller: page_controller,
+                      count: stepsss.length,
+                      effect: WormEffect(
+                        activeDotColor: Theme.of(context).primaryColor,
+                        dotHeight: 8,
+                        dotWidth: 8,
+                        type: WormType.normal,
+                      ),
+                    ),
                   )
                 ],
               )

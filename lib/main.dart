@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:supabase/supabase.dart';
 import 'dart:convert';
 import 'recipe.dart';
 import 'upload.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+/*
+
+var obj = {
+  "image_url":
+      "",
+  "recipe_name": "",
+  "ingredients": "",
+  "steps": [
+    
+  ],
+  "created_by": ""
+};
+*/
+const supabaseUrl = 'https://jkrqnlckxphqtgzbgffs.supabase.co';
+const supabaseKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImprcnFubGNreHBocXRnemJnZmZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODQ0ODUyNDgsImV4cCI6MjAwMDA2MTI0OH0.2bkQ5zuEPKqhOl9aeSoNjgilokE1aKtq_Zk1mYOubfo';
 
 var obj = {
   "image_url":
@@ -16,46 +35,89 @@ var obj = {
   "created_by": "Yuval Noyman"
 };
 
-var json = jsonEncode(obj);
+List objectsList = [];
+final supabase = Supabase.instance.client;
+
+var aJson = jsonEncode(obj);
+
 bool wantToUpload = false;
-Map<String, dynamic> valuess = jsonDecode(json);
-void main() {
+Map<String, dynamic> valuess = jsonDecode(aJson);
+
+Future<void> main() async {
+
+  objectsList.add(valuess);
+  objectsList.add(valuess);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: supabaseKey,
+  );
+  final List listOfJsons =
+      await supabase.from("recipesJsons").select<PostgrestList>("JSON");
+  for (var element in listOfJsons) {
+    // print(element["JSON"]);
+
+    Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+    // print(decJson);
+    objectsList.add(decJson);
+  }
+  for (var amo in objectsList) {
+    print(amo);
+  }
   runApp(MainApp());
-  print(valuess["recipe_name"]);
-  print(json);
-  print(valuess["steps"][0]);
+  // print(valuess["recipe_name"]);
+  // print(json);
+  // print(valuess["steps"][0]);
 }
 
-class MainApp extends StatefulWidget {
-  const MainApp({super.key});
-
-  @override
-  State<MainApp> createState() => _MainAppState();
-}
-
-class _MainAppState extends State<MainApp> {
+class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    void navigateToUpload() {
-      setState(() {
-        wantToUpload = true;
-      });
-    }
-
     return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: wantToUpload ? NewRecipe() : Scaffold(
-        floatingActionButton: FloatingActionButton(onPressed: navigateToUpload),
-        body: SafeArea(
-          child: Center(
-            child: ListView(
-              children: [
-                RecipeWidget(values: valuess, index: 1),
-                RecipeWidget(values: valuess, index: 1)
-              ],
-            ),
-          ),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: Color(0xFFe63946),
+          secondary: Color(0xFFe63946),
+          background: Color(0xFFf1faee),
         ),
+        primaryColor: Color(0xFFe63946),
+      ),
+      home: MainScreen(),
+      routes: {
+        '/newRecipe': (context) => NewRecipe(),
+      },
+    );
+  }
+}
+
+class MainScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFFf1faee),
+      appBar: AppBar(
+        title: Text('zushi&karrot'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/newRecipe');
+        },
+        child: Icon(
+          Icons.add_rounded,
+          size: 38,
+        ),
+      ),
+      body: SafeArea(
+        child: Center(
+            child: new ListView.builder(
+          itemCount: objectsList.length,
+          itemBuilder: (context, index) {
+            return RecipeWidget(
+              values: objectsList[index],
+            );
+          },
+        )),
       ),
     );
   }
