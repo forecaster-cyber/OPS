@@ -122,6 +122,11 @@ class _RecipeWidgetState extends State<RecipeWidget> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SmoothPageIndicator(
+                          onDotClicked: (index) {
+                            page_controller.animateToPage(index,
+                                duration: Duration(milliseconds: 250),
+                                curve: Curves.linear);
+                          },
                           controller: page_controller,
                           count: stepsss.length,
                           effect: WormEffect(

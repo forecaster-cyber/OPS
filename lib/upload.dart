@@ -7,9 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 import 'package:supabase/supabase.dart';
 import 'package:crypto/crypto.dart';
+import'package:universal_io/io.dart';
 
-var imageForSendToAPI;
-File? avatarFile;
 File? imageFile;
 List<TextFieldModel> textFields = [];
 List<String> steps = [];
@@ -60,12 +59,10 @@ class _NewRecipeState extends State<NewRecipe> {
     print("object");
     print(generateGravatarImageUrl("forecaster1310@gmail.com", 80));
     return Scaffold(
-      // backgroundColor: Colors.white,
+      backgroundColor: Color(0xFFf1faee),
       appBar: AppBar(
-        foregroundColor: Colors.white,
-        backgroundColor: Theme.of(context).primaryColor,
         title: Text('Share a Recipe'),
-        // elevation: 0,
+        elevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -83,7 +80,7 @@ class _NewRecipeState extends State<NewRecipe> {
                   borderRadius: BorderRadius.circular(15),
                   color: imageFile != null
                       ? Colors.transparent
-                      : Theme.of(context).primaryColor,
+                      : Color(0xFF415d59),
                 ),
                 child: imageFile != null
                     ? kIsWeb
@@ -99,24 +96,14 @@ class _NewRecipeState extends State<NewRecipe> {
               ),
             ),
             const SizedBox(height: 26),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: 800,
-              ),
-              child: TextField(
-                controller: titleController,
-                decoration: InputDecoration(labelText: 'Title:'),
-              ),
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(labelText: 'Title:'),
             ),
             SizedBox(height: 34),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: 800,
-              ),
-              child: TextField(
-                controller: ingriedientsController,
-                decoration: InputDecoration(labelText: 'Ingredients:'),
-              ),
+            TextField(
+              controller: ingriedientsController,
+              decoration: InputDecoration(labelText: 'Ingredients:'),
             ),
             SizedBox(height: 34),
             Text('Steps:'),
@@ -124,15 +111,10 @@ class _NewRecipeState extends State<NewRecipe> {
               Row(
                 children: [
                   Expanded(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 800,
-                      ),
-                      child: TextField(
-                        controller: textFields[i].controller,
-                        decoration: InputDecoration(
-                          labelText: 'Step ${i + 1}',
-                        ),
+                    child: TextField(
+                      controller: textFields[i].controller,
+                      decoration: InputDecoration(
+                        labelText: 'Step ${i + 1}',
                       ),
                     ),
                   ),
@@ -140,7 +122,7 @@ class _NewRecipeState extends State<NewRecipe> {
                     IconButton(
                       icon: Icon(
                         Icons.add,
-                        color: Theme.of(context).primaryColor,
+                        color: Color(0xFF415d59),
                       ),
                       onPressed: () {
                         setState(() {
@@ -162,22 +144,11 @@ class _NewRecipeState extends State<NewRecipe> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
-                      foregroundColor: Colors.white,
-                      backgroundColor: Theme.of(context).primaryColor,
                     ),
                     onPressed: () {
-                      if (imageFile != null) {
-                        getStepsOnSubmit();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('image is required')),
-                        );
-                      }
+                      getStepsOnSubmit();
                     },
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(),
-                    ),
+                    child: Text('Submit'),
                   ),
                 ),
               ],
@@ -195,12 +166,9 @@ class _NewRecipeState extends State<NewRecipe> {
       maxWidth: 500,
       maxHeight: 500,
     );
-    imageForSendToAPI = await pickedFile!.readAsBytes();
     if (pickedFile != null) {
       setState(() {
-        if (kIsWeb) {
-          imageFile = File(pickedFile.path);
-        }
+        imageFile = File(pickedFile.path);
       });
     }
   }
@@ -216,14 +184,21 @@ class _NewRecipeState extends State<NewRecipe> {
     final List<FileObject> listOfPhotos =
         await supabase.storage.from("Photos").list();
 
-    final avatarFile = File(imageFile!.path);
-
-    final String path = await supabase.storage.from('Photos').upload(
-          listOfPhotos.length.toString(),
-          avatarFile!,
-          fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
-        );
-    print("First path: $path");
+    if (kIsWeb) {
+      var avatarFile = File(imageFile!.path);
+      final avatarfileBytes = await avatarFile.readAsBytes();
+      await supabase.storage.from('Photos').uploadBinary(
+          listOfPhotos.length.toString(), avatarfileBytes,
+          fileOptions: const FileOptions(cacheControl: '3600', upsert: false));
+    } else {
+      var avatarFile = File(imageFile!.path);
+      final String path = await supabase.storage.from('Photos').upload(
+            listOfPhotos.length.toString(),
+            avatarFile,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          );
+    }
+    //print("First path: $path");
     final String publicUrl = supabase.storage
         .from('Photos')
         .getPublicUrl("${listOfPhotos.length.toString()}");

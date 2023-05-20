@@ -1,9 +1,10 @@
-
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase/supabase.dart';
 import 'package:zushi_and_karrot/auth.dart';
+import 'package:zushi_and_karrot/profile.dart';
 import 'dart:convert';
 import 'recipe.dart';
 import 'upload.dart';
@@ -11,6 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signinsignup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+List myPostsList = [];
 /*
 
 var obj = {
@@ -47,9 +49,10 @@ final AuthManager authManager = AuthManager();
 var aJson = jsonEncode(obj);
 String? emailll = '';
 String? passowrdd = '';
-
+int _currentIndex = 0;
 bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
+bool ProfilePage = false;
 
 Future<void> main() async {
   //objectsList.add(valuess);
@@ -102,7 +105,6 @@ class _MainAppState extends State<MainApp> {
           secondary: Color(0xFFe7eeed),
           // background: Color(0xFFfbf5f3),
           background: Color(0xFFf6f9f8),
-
         ),
         inputDecorationTheme: const InputDecorationTheme(
           enabledBorder: UnderlineInputBorder(
@@ -112,7 +114,6 @@ class _MainAppState extends State<MainApp> {
         useMaterial3: true,
         // primaryColor: Color(0xFFe63946),
         primaryColor: Color(0xFF415d59),
-        
       ),
       home: LoginPage(authManager),
       routes: {
@@ -151,6 +152,33 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        bottomNavigationBar: NavigationBar(
+          indicatorColor: Color(0xFF415d59),
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (value) {
+            setState(() {
+              if (value == 0) {
+                ProfilePage = false;
+              } else if (value == 1) {
+                ProfilePage = true;
+              }
+
+              _currentIndex = value;
+            });
+          },
+          destinations: [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              label: "Home",
+              selectedIcon: Icon(Icons.home),
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              label: "Profile",
+              selectedIcon: Icon(Icons.person),
+            )
+          ],
+        ),
         // backgroundColor: Color(0xFFf1faee),
         // backgroundColor: Colors.white,
         appBar: AppBar(
@@ -158,7 +186,18 @@ class _MainScreenState extends State<MainScreen> {
           scrolledUnderElevation: 0.0,
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Colors.white,
-          title: Text('zushi&karrot'),
+          title: kIsWeb
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('zushi&karrot'),
+                    IconButton(
+                      onPressed: refresh,
+                      icon: Icon(Icons.refresh),
+                    )
+                  ],
+                )
+              : Text('zushi&karrot'),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -170,20 +209,22 @@ class _MainScreenState extends State<MainScreen> {
           ),
           backgroundColor: Theme.of(context).primaryColor,
         ),
-        body: SafeArea(
-          child: Center(
-            child: RefreshIndicator(
-              child: ListView.builder(
-                itemCount: objectsList.length,
-                itemBuilder: (context, index) {
-                  return RecipeWidget(
-                    values: objectsList[index],
-                  );
-                },
-              ),
-              onRefresh: refresh,
-            ),
-          ),
-        ));
+        body: ProfilePage
+            ? profilePage()
+            : SafeArea(
+                child: Center(
+                  child: RefreshIndicator(
+                    child: ListView.builder(
+                      itemCount: objectsList.length,
+                      itemBuilder: (context, index) {
+                        return RecipeWidget(
+                          values: objectsList[index],
+                        );
+                      },
+                    ),
+                    onRefresh: refresh,
+                  ),
+                ),
+              ));
   }
 }
