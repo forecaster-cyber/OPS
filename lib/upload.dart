@@ -59,9 +59,11 @@ class _NewRecipeState extends State<NewRecipe> {
     print("object");
     print(generateGravatarImageUrl("forecaster1310@gmail.com", 80));
     return Scaffold(
-      backgroundColor: Color(0xFFf1faee),
+      // backgroundColor: Color(0xFFf1faee),
       appBar: AppBar(
         title: Text('Share a Recipe'),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: Padding(
@@ -144,6 +146,8 @@ class _NewRecipeState extends State<NewRecipe> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
                     ),
                     onPressed: () {
                       getStepsOnSubmit();
@@ -184,7 +188,6 @@ class _NewRecipeState extends State<NewRecipe> {
     final List<FileObject> listOfPhotos =
         await supabase.storage.from("Photos").list();
 
-
     if (kIsWeb) {
       var avatarFile = File(imageFile!.path);
       final avatarfileBytes = await avatarFile.readAsBytes();
@@ -223,9 +226,12 @@ class _NewRecipeState extends State<NewRecipe> {
     var newJson = jsonEncode(newObj);
 
     await supabase.from("recipesJsons").insert([
-      {"id": listLength, "JSON": newJson, "created_by": extractUsername(emailll!)}
+      {
+        "id": listLength,
+        "JSON": newJson,
+        "created_by": extractUsername(emailll!)
+      }
     ]);
-    
 
     Navigator.pop(context);
     setState(() {

@@ -84,7 +84,7 @@ Future<void> main() async {
   final List listOfMyPostsJsons = await supabase
       .from("recipesJsons")
       .select<PostgrestList>("JSON")
-      .textSearch("created_by",extractUsername(emailll!) );
+      .textSearch("created_by", extractUsername(emailll!));
   for (var element in listOfMyPostsJsons) {
     // print(element["JSON"]);
 
@@ -200,85 +200,83 @@ class _MainScreenState extends State<MainScreen> {
           scrolledUnderElevation: 0.0,
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Colors.white,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Zushi&Karrot"),
-              IconButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Container(
-                          child: Center(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                width: 300,
-                                color: Colors.white,
-                                height: 200,
-                                child: Center(
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        "Search!",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 40,
-                                            color: Colors.black),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Material(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: TextField(
-                                              controller: searchController,
-                                            ),
+          actions: [Padding(
+            padding: const EdgeInsets.only(right: 25.0),
+            child: IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              width: 300,
+                              color: Color(0xFFf6f9f8),
+                              height: 200,
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "Search!",
+                                      style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 40,
+                                          color: Colors.black),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Material(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: TextField(
+                                            controller: searchController,
                                           ),
                                         ),
                                       ),
-                                      IconButton(
-                                          onPressed: () async {
-                                            objectsList = [];
-                                            final List listOfsearchedJsons =
-                                                await supabase
-                                                    .from("recipesJsons")
-                                                    .select<PostgrestList>(
-                                                        "JSON")
-                                                    .textSearch("created_by",
-                                                        searchController.text,
-                                                        type: TextSearchType
-                                                            .websearch);
-                                            for (var element
-                                                in listOfsearchedJsons) {
-                                              // print(element["JSON"]);
-
-                                              Map<String, dynamic> decJson =
-                                                  jsonDecode(element["JSON"]);
-                                              // print(decJson);
-
-                                              objectsList.add(decJson);
-                                            }
-                                            setState(() {
-                                              objectsList = objectsList;
-                                            });
-                                            print(objectsList);
-                                          },
-                                          icon: Icon(Icons.search))
-                                    ],
-                                  ),
+                                    ),
+                                    IconButton(
+                                        onPressed: () async {
+                                          objectsList = [];
+                                          final List listOfsearchedJsons =
+                                              await supabase
+                                                  .from("recipesJsons")
+                                                  .select<PostgrestList>("JSON")
+                                                  .textSearch("created_by",
+                                                      searchController.text,
+                                                      type: TextSearchType
+                                                          .websearch);
+                                          for (var element
+                                              in listOfsearchedJsons) {
+                                            // print(element["JSON"]);
+          
+                                            Map<String, dynamic> decJson =
+                                                jsonDecode(element["JSON"]);
+                                            // print(decJson);
+          
+                                            objectsList.add(decJson);
+                                          }
+                                          setState(() {
+                                            objectsList = objectsList;
+                                          });
+                                          print(objectsList);
+                                        },
+                                        icon: Icon(Icons.search))
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                        );
-                      },
-                    );
-                  },
-                  icon: Icon(Icons.search_sharp)),
-            ],
-          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                icon: Icon(Icons.search_sharp)),
+          ),],
+          title: Text("Zushi&Karrot"),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
