@@ -8,6 +8,8 @@ import 'main.dart';
 import 'package:supabase/supabase.dart';
 import 'package:crypto/crypto.dart';
 
+var imageForSendToAPI;
+File? avatarFile;
 File? imageFile;
 List<TextFieldModel> textFields = [];
 List<String> steps = [];
@@ -193,9 +195,12 @@ class _NewRecipeState extends State<NewRecipe> {
       maxWidth: 500,
       maxHeight: 500,
     );
+    imageForSendToAPI = await pickedFile!.readAsBytes();
     if (pickedFile != null) {
       setState(() {
-        imageFile = File(pickedFile.path);
+        if (kIsWeb) {
+          imageFile = File(pickedFile.path);
+        }
       });
     }
   }
@@ -210,10 +215,12 @@ class _NewRecipeState extends State<NewRecipe> {
     textFields.add(TextFieldModel(controller: TextEditingController()));
     final List<FileObject> listOfPhotos =
         await supabase.storage.from("Photos").list();
+
     final avatarFile = File(imageFile!.path);
+
     final String path = await supabase.storage.from('Photos').upload(
           listOfPhotos.length.toString(),
-          avatarFile,
+          avatarFile!,
           fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
         );
     print("First path: $path");
