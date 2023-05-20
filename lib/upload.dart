@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'main.dart';
 import 'package:supabase/supabase.dart';
 import 'package:crypto/crypto.dart';
+
 File? imageFile;
 List<TextFieldModel> textFields = [];
 List<String> steps = [];
@@ -13,18 +15,20 @@ class NewRecipe extends StatefulWidget {
   @override
   _NewRecipeState createState() => _NewRecipeState();
 }
+
 String generateGravatarImageUrl(String email, {int size = 80}) {
   final hash = md5.convert(utf8.encode(email.trim().toLowerCase()));
   final url = 'https://www.gravatar.com/avatar/$hash?s=$size';
   return url;
 }
+
 String extractUsername(String email) {
   // Find the index of the "@" symbol
   final atIndex = email.indexOf('@');
-  
+
   // Extract the substring before the "@" symbol
   final username = email.substring(0, atIndex);
-  
+
   return username;
 }
 
@@ -42,10 +46,12 @@ class _NewRecipeState extends State<NewRecipe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFf1faee),
+      // backgroundColor: Colors.white,
       appBar: AppBar(
+        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text('Share a Recipe'),
-        elevation: 0,
+        // elevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -63,10 +69,10 @@ class _NewRecipeState extends State<NewRecipe> {
                   borderRadius: BorderRadius.circular(15),
                   color: imageFile != null
                       ? Colors.transparent
-                      : Color(0xFFe63946),
+                      :  Theme.of(context).primaryColor,
                 ),
                 child: imageFile != null
-                    ? Image.file(imageFile!)
+                    ? kIsWeb ? Image.network(imageFile!.path): Image.file(imageFile!)
                     : Center(
                         child: Icon(
                           Icons.add_a_photo,
@@ -103,7 +109,7 @@ class _NewRecipeState extends State<NewRecipe> {
                     IconButton(
                       icon: Icon(
                         Icons.add,
-                        color: Color(0xFFe63946),
+                        color: Theme.of(context).primaryColor,
                       ),
                       onPressed: () {
                         setState(() {
@@ -125,11 +131,22 @@ class _NewRecipeState extends State<NewRecipe> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
+                      foregroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).primaryColor,
                     ),
                     onPressed: () {
-                      getStepsOnSubmit();
+                      if (imageFile != null) {
+                        getStepsOnSubmit();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('image is required')),
+                        );
+                      }
                     },
-                    child: Text('Submit'),
+                    child: Text(
+                      'Submit',
+                      style: TextStyle(),
+                    ),
                   ),
                 ),
               ],

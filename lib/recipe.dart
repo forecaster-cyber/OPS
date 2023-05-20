@@ -34,94 +34,109 @@ class _RecipeWidgetState extends State<RecipeWidget> {
       steps.add(Text(widget.values['steps'][i]));
     }
     return Container(
-      width: 450,
+      width: 100,
+      constraints: BoxConstraints(
+        maxWidth: 100,
+      ),
       child: Padding(
         padding: EdgeInsets.all(8.0),
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: [
-              GestureDetector(
-                child: Image.network(
-                  image_url,
-                  width: 250,
-                  height: 250,
-                ),
-                onTap: () {
-                  if (expansion_tile_first_controller.isExpanded) {
-                    expansion_tile_first_controller.collapse();
-                  } else {
-                    expansion_tile_first_controller.expand();
-                  }
-                },
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 100,
+          ),
+          child: Card(
+            color: Color(0xFFe7eeed),
+            elevation: 0,
+            clipBehavior: Clip.antiAlias,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 800,
               ),
-              ExpansionTile(
-                controller: expansion_tile_first_controller,
-                title: Text(
-                  recipe_name.toString(),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black),
-                ),
-                subtitle: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      backgroundImage: NetworkImage(avatar_url),
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      created_by.toString(),
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
-                ),
+              child: Column(
                 children: [
+                  GestureDetector(
+                    child: Image.network(
+                      image_url,
+                      width: 250,
+                      height: 250,
+                    ),
+                    onTap: () {
+                      if (expansion_tile_first_controller.isExpanded) {
+                        expansion_tile_first_controller.collapse();
+                      } else {
+                        expansion_tile_first_controller.expand();
+                      }
+                    },
+                  ),
                   ExpansionTile(
-                    controller: expansionTileSecondController,
-                    title: Text("Ingerdiants:",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    controller: expansion_tile_first_controller,
+                    title: Text(
+                      recipe_name.toString(),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    subtitle: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          backgroundImage: NetworkImage(avatar_url),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          created_by.toString(),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
+                    ),
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(ingerdiants),
-                      )
-                    ],
-                  ),
-                  Text(
-                    "Steps:",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
-                  ),
-                  Center(
-                    child: Container(
-                      height: 100,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: PageView(
-                          controller: page_controller,
-                          children: steps,
+                      ExpansionTile(
+                        controller: expansionTileSecondController,
+                        title: Text("Ingerdiants:",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(ingerdiants),
+                          )
+                        ],
+                      ),
+                      Text(
+                        "Steps:",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 25.0),
+                      ),
+                      Center(
+                        child: Container(
+                          height: 100,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: PageView(
+                              controller: page_controller,
+                              children: steps,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SmoothPageIndicator(
-                      controller: page_controller,
-                      count: stepsss.length,
-                      effect: WormEffect(
-                        activeDotColor: Theme.of(context).primaryColor,
-                        dotHeight: 8,
-                        dotWidth: 8,
-                        type: WormType.normal,
-                      ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SmoothPageIndicator(
+                          controller: page_controller,
+                          count: stepsss.length,
+                          effect: WormEffect(
+                            activeDotColor: Theme.of(context).primaryColor,
+                            dotHeight: 8,
+                            dotWidth: 8,
+                            type: WormType.normal,
+                          ),
+                        ),
+                      )
+                    ],
                   )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
       ),

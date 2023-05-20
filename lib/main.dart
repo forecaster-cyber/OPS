@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:supabase/supabase.dart';
 import 'package:zushi_and_karrot/auth.dart';
@@ -49,8 +50,6 @@ bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
 
 Future<void> main() async {
-  
-
   //objectsList.add(valuess);
   //objectsList.add(valuess);
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,12 +94,23 @@ class _MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: Color(0xFFe63946),
-          secondary: Color(0xFFe63946),
-          background: Color(0xFFf1faee),
+          // primary: Color(0xFFe63946),
+          primary: Color(0xFF415d59),
+          // secondary: Color(0xFFe63946),
+          secondary: Color(0xFFe7eeed),
+          // background: Color(0xFFfbf5f3),
+          background: Color(0xFFf6f9f8),
+
+        ),
+        inputDecorationTheme: const InputDecorationTheme(
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF415d59)),
+          ),
         ),
         useMaterial3: true,
-        primaryColor: Color(0xFFe63946),
+        // primaryColor: Color(0xFFe63946),
+        primaryColor: Color(0xFF415d59),
+        
       ),
       home: LoginPage(authManager),
       routes: {
@@ -139,8 +149,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFFf1faee),
+        // backgroundColor: Color(0xFFf1faee),
+        // backgroundColor: Colors.white,
         appBar: AppBar(
+          centerTitle: true,
+          scrolledUnderElevation: 0.0,
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Colors.white,
           title: Text('zushi&karrot'),
         ),
         floatingActionButton: FloatingActionButton(
@@ -151,7 +166,7 @@ class _MainScreenState extends State<MainScreen> {
             Icons.add_rounded,
             size: 38,
           ),
-          backgroundColor: Color(0xFFe63946),
+          backgroundColor: Theme.of(context).primaryColor,
         ),
         body: SafeArea(
           child: Center(
