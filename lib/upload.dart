@@ -18,11 +18,7 @@ class NewRecipe extends StatefulWidget {
   _NewRecipeState createState() => _NewRecipeState();
 }
 
-<<<<<<< HEAD
-String generateGravatarImageUrl(String email, {int size = 80}) {
-=======
 String generateGravatarImageUrl(String email, int size) {
->>>>>>> 359063abfc79c8f7cd16eed4311ed41efc197a1c
   final hash = md5.convert(utf8.encode(email.trim().toLowerCase()));
   final url = 'https://www.gravatar.com/avatar/$hash?s=$size';
   print(url);
@@ -84,12 +80,13 @@ class _NewRecipeState extends State<NewRecipe> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
                   color: imageFile != null
-                      ? Colors.transparentgit log --merge
-
-                      :  Theme.of(context).primaryColor,
+                      ? Colors.transparent
+                      : Theme.of(context).primaryColor,
                 ),
                 child: imageFile != null
-                    ? kIsWeb ? Image.network(imageFile!.path): Image.file(imageFile!)
+                    ? kIsWeb
+                        ? Image.network(imageFile!.path)
+                        : Image.file(imageFile!)
                     : Center(
                         child: Icon(
                           Icons.add_a_photo,
@@ -100,14 +97,24 @@ class _NewRecipeState extends State<NewRecipe> {
               ),
             ),
             const SizedBox(height: 26),
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: 'Title:'),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 800,
+              ),
+              child: TextField(
+                controller: titleController,
+                decoration: InputDecoration(labelText: 'Title:'),
+              ),
             ),
             SizedBox(height: 34),
-            TextField(
-              controller: ingriedientsController,
-              decoration: InputDecoration(labelText: 'Ingredients:'),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 800,
+              ),
+              child: TextField(
+                controller: ingriedientsController,
+                decoration: InputDecoration(labelText: 'Ingredients:'),
+              ),
             ),
             SizedBox(height: 34),
             Text('Steps:'),
@@ -115,10 +122,15 @@ class _NewRecipeState extends State<NewRecipe> {
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: textFields[i].controller,
-                      decoration: InputDecoration(
-                        labelText: 'Step ${i + 1}',
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 800,
+                      ),
+                      child: TextField(
+                        controller: textFields[i].controller,
+                        decoration: InputDecoration(
+                          labelText: 'Step ${i + 1}',
+                        ),
                       ),
                     ),
                   ),
@@ -230,8 +242,6 @@ class _NewRecipeState extends State<NewRecipe> {
     await supabase.from("recipesJsons").insert([
       {"id": listLength, "JSON": newJson, "created_by": emailll}
     ]);
-    
-
 
     Navigator.pop(context);
     setState(() {

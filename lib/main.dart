@@ -1,4 +1,6 @@
 
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:supabase/supabase.dart';
 import 'package:zushi_and_karrot/auth.dart';
