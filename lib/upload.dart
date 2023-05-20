@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'main.dart';
 import 'package:supabase/supabase.dart';
-
+import 'package:crypto/crypto.dart';
 File? imageFile;
 List<TextFieldModel> textFields = [];
 List<String> steps = [];
@@ -12,6 +12,11 @@ List<String> steps = [];
 class NewRecipe extends StatefulWidget {
   @override
   _NewRecipeState createState() => _NewRecipeState();
+}
+String generateGravatarImageUrl(String email, {int size = 80}) {
+  final hash = md5.convert(utf8.encode(email.trim().toLowerCase()));
+  final url = 'https://www.gravatar.com/avatar/$hash?s=$size';
+  return url;
 }
 
 TextEditingController ingriedientsController = TextEditingController();

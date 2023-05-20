@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supabase/supabase.dart';
+import 'package:zushi_and_karrot/auth.dart';
 import 'dart:convert';
 import 'recipe.dart';
 import 'upload.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'signinsignup.dart';
 
 /*
 
@@ -37,16 +39,15 @@ var obj = {
 
 List objectsList = [];
 final supabase = Supabase.instance.client;
-
+final AuthManager authManager = AuthManager();
 var aJson = jsonEncode(obj);
 
 bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
 
 Future<void> main() async {
-
-  objectsList.add(valuess);
-  objectsList.add(valuess);
+  //objectsList.add(valuess);
+  //objectsList.add(valuess);
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: supabaseUrl,
@@ -59,6 +60,7 @@ Future<void> main() async {
 
     Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
     // print(decJson);
+
     objectsList.add(decJson);
   }
   for (var amo in objectsList) {
@@ -70,7 +72,12 @@ Future<void> main() async {
   // print(valuess["steps"][0]);
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -81,9 +88,10 @@ class MainApp extends StatelessWidget {
           secondary: Color(0xFFe63946),
           background: Color(0xFFf1faee),
         ),
+        useMaterial3: true,
         primaryColor: Color(0xFFe63946),
       ),
-      home: MainScreen(),
+      home: LoginPage(authManager),
       routes: {
         '/newRecipe': (context) => NewRecipe(),
       },
@@ -91,34 +99,63 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  Future<void> refresh() async {
+    final List listOfJsons =
+        await supabase.from("recipesJsons").select<PostgrestList>("JSON");
+    setState(() {
+      objectsList = [];
+    });
+    for (var element in listOfJsons) {
+      // print(element["JSON"]);
+
+      Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+      // print(decJson);
+      setState(() {
+        objectsList.add(decJson);
+      });
+    }
+    for (var amo in objectsList) {
+      print(amo);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFf1faee),
-      appBar: AppBar(
-        title: Text('zushi&karrot'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/newRecipe');
-        },
-        child: Icon(
-          Icons.add_rounded,
-          size: 38,
+        backgroundColor: Color(0xFFf1faee),
+        appBar: AppBar(
+          title: Text('zushi&karrot'),
         ),
-      ),
-      body: SafeArea(
-        child: Center(
-            child: new ListView.builder(
-          itemCount: objectsList.length,
-          itemBuilder: (context, index) {
-            return RecipeWidget(
-              values: objectsList[index],
-            );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/newRecipe');
           },
-        )),
-      ),
-    );
+          child: Icon(
+            Icons.add_rounded,
+            size: 38,
+          ),
+          backgroundColor: Color(0xFFe63946),
+        ),
+        body: SafeArea(
+          child: Center(
+            child: RefreshIndicator(
+              child: ListView.builder(
+                itemCount: objectsList.length,
+                itemBuilder: (context, index) {
+                  return RecipeWidget(
+                    values: objectsList[index],
+                  );
+                },
+              ),
+              onRefresh: refresh,
+            ),
+          ),
+        ));
   }
 }
