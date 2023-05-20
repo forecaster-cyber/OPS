@@ -6,6 +6,7 @@ import 'recipe.dart';
 import 'upload.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signinsignup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /*
 
@@ -41,11 +42,15 @@ List objectsList = [];
 final supabase = Supabase.instance.client;
 final AuthManager authManager = AuthManager();
 var aJson = jsonEncode(obj);
+String? emailll = '';
+String? passowrdd = '';
 
 bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
 
 Future<void> main() async {
+  
+
   //objectsList.add(valuess);
   //objectsList.add(valuess);
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,6 +58,12 @@ Future<void> main() async {
     url: supabaseUrl,
     anonKey: supabaseKey,
   );
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  final String? saved_email = prefs.getString('email');
+  final String? saved_password = prefs.getString('password');
+  emailll = saved_email;
+  passowrdd = saved_password;
   final List listOfJsons =
       await supabase.from("recipesJsons").select<PostgrestList>("JSON");
   for (var element in listOfJsons) {

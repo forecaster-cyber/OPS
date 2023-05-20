@@ -18,6 +18,15 @@ String generateGravatarImageUrl(String email, {int size = 80}) {
   final url = 'https://www.gravatar.com/avatar/$hash?s=$size';
   return url;
 }
+String extractUsername(String email) {
+  // Find the index of the "@" symbol
+  final atIndex = email.indexOf('@');
+  
+  // Extract the substring before the "@" symbol
+  final username = email.substring(0, atIndex);
+  
+  return username;
+}
 
 TextEditingController ingriedientsController = TextEditingController();
 TextEditingController titleController = TextEditingController();
@@ -174,7 +183,8 @@ class _NewRecipeState extends State<NewRecipe> {
       'recipe_name': titleController.text,
       'ingredients': ingriedientsController.text,
       'steps': steps,
-      'created_by': "mushe"
+      'created_by': extractUsername(emailll!),
+      'avatar_url': generateGravatarImageUrl(emailll!)
     };
     var newJson = jsonEncode(newObj);
 
