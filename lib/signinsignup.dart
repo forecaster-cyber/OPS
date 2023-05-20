@@ -1,3 +1,5 @@
+import 'package:zushi_and_karrot/upload.dart';
+
 import 'main.dart';
 import 'package:flutter/material.dart';
 import 'auth.dart';
@@ -12,8 +14,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    emailController.text = emailll??"";
-    passwordController.text = passowrdd??"";
+    emailController.text = emailll ?? "";
+    passwordController.text = passowrdd ?? "";
     return Scaffold(
       appBar: AppBar(
         title: Text('Sign In'),
@@ -49,6 +51,8 @@ class LoginPage extends StatelessWidget {
                     await SharedPreferences.getInstance();
                 await prefs.setString('email', email);
                 await prefs.setString('password', password);
+                await prefs.setString(
+                    'avatar_url', generateGravatarImageUrl(emailll!, 80));
               },
               child: Text('Sign In'),
             ),
@@ -70,6 +74,8 @@ class LoginPage extends StatelessWidget {
                     await SharedPreferences.getInstance();
                 await prefs.setString('email', email);
                 await prefs.setString('password', password);
+                await prefs.setString(
+                    'avatar_url', generateGravatarImageUrl(emailll!, 80));
               },
               child: Text('Sign Up'),
             ),

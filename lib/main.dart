@@ -7,7 +7,9 @@ import 'upload.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signinsignup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'profile.dart';
 
+List myPostsList = [];
 /*
 
 var obj = {
@@ -44,13 +46,12 @@ final AuthManager authManager = AuthManager();
 var aJson = jsonEncode(obj);
 String? emailll = '';
 String? passowrdd = '';
-
+int _currentIndex = 0;
+List<Widget> pages = [];
 bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
-
+bool ProfilePage = false;
 Future<void> main() async {
-  
-
   //objectsList.add(valuess);
   //objectsList.add(valuess);
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ Future<void> main() async {
   );
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
+  avatarararara = prefs.getString("avatar_url");
   final String? saved_email = prefs.getString('email');
   final String? saved_password = prefs.getString('password');
   emailll = saved_email;
@@ -77,6 +79,9 @@ Future<void> main() async {
   for (var amo in objectsList) {
     print(amo);
   }
+  print(generateGravatarImageUrl("forecaster1310@gmail.com", 80));
+  print(emailll);
+  print(avatarararara);
   runApp(MainApp());
   // print(valuess["recipe_name"]);
   // print(json);
@@ -119,6 +124,10 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> refresh() async {
     final List listOfJsons =
         await supabase.from("recipesJsons").select<PostgrestList>("JSON");
+    final List listOfMyPostsJsons = await supabase
+        .from("recipesJsons")
+        .select<PostgrestList>("JSON")
+        .eq("created_by", emailll);
     setState(() {
       objectsList = [];
     });
@@ -131,7 +140,20 @@ class _MainScreenState extends State<MainScreen> {
         objectsList.add(decJson);
       });
     }
+    print(listOfMyPostsJsons);
+    for (var element in listOfMyPostsJsons) {
+      // print(element["JSON"]);
+
+      Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+      // print(decJson);
+      setState(() {
+        myPostsList.add(decJson);
+      });
+    }
     for (var amo in objectsList) {
+      print(amo);
+    }
+    for (var amo in myPostsList) {
       print(amo);
     }
   }
@@ -140,6 +162,27 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Color(0xFFf1faee),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (value) {
+            setState(() {
+              ProfilePage = !ProfilePage;
+              _currentIndex = value;
+            });
+          },
+          destinations: [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              label: "Home",
+              selectedIcon: Icon(Icons.home),
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              label: "Profile",
+              selectedIcon: Icon(Icons.person),
+            )
+          ],
+        ),
         appBar: AppBar(
           title: Text('zushi&karrot'),
         ),
@@ -153,20 +196,42 @@ class _MainScreenState extends State<MainScreen> {
           ),
           backgroundColor: Color(0xFFe63946),
         ),
-        body: SafeArea(
-          child: Center(
-            child: RefreshIndicator(
-              child: ListView.builder(
-                itemCount: objectsList.length,
-                itemBuilder: (context, index) {
-                  return RecipeWidget(
-                    values: objectsList[index],
-                  );
-                },
-              ),
-              onRefresh: refresh,
-            ),
-          ),
-        ));
+        body: ProfilePage
+            ? profilePage()
+            : SafeArea(
+                child: Center(
+                  child: RefreshIndicator(
+                    child: ListView.builder(
+                      itemCount: objectsList.length,
+                      itemBuilder: (context, index) {
+                        return RecipeWidget(
+                          values: objectsList[index],
+                        );
+                      },
+                    ),
+                    onRefresh: () async {
+                      final List listOfJsons = await supabase
+                          .from("recipesJsons")
+                          .select<PostgrestList>("JSON");
+                      setState(() {
+                        objectsList = [];
+                      });
+                      for (var element in listOfJsons) {
+                        // print(element["JSON"]);
+
+                        Map<String, dynamic> decJson =
+                            jsonDecode(element["JSON"]);
+                        // print(decJson);
+                        setState(() {
+                          objectsList.add(decJson);
+                        });
+                      }
+                      for (var amo in objectsList) {
+                        print(amo);
+                      }
+                    },
+                  ),
+                ),
+              ));
   }
 }

@@ -2,29 +2,39 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 import 'package:supabase/supabase.dart';
 import 'package:crypto/crypto.dart';
+
 File? imageFile;
 List<TextFieldModel> textFields = [];
 List<String> steps = [];
+String? avatarararara = '';
 
 class NewRecipe extends StatefulWidget {
   @override
   _NewRecipeState createState() => _NewRecipeState();
 }
-String generateGravatarImageUrl(String email, {int size = 80}) {
+
+String generateGravatarImageUrl(String email, int size) {
   final hash = md5.convert(utf8.encode(email.trim().toLowerCase()));
   final url = 'https://www.gravatar.com/avatar/$hash?s=$size';
+  print(url);
+  print(url);
+  print(url);
+  print(url);
+  print(url);
   return url;
 }
+
 String extractUsername(String email) {
   // Find the index of the "@" symbol
   final atIndex = email.indexOf('@');
-  
+
   // Extract the substring before the "@" symbol
   final username = email.substring(0, atIndex);
-  
+
   return username;
 }
 
@@ -41,6 +51,11 @@ class _NewRecipeState extends State<NewRecipe> {
 
   @override
   Widget build(BuildContext context) {
+    print("object");
+    print("object");
+    print("object");
+    print("object");
+    print(generateGravatarImageUrl("forecaster1310@gmail.com", 80));
     return Scaffold(
       backgroundColor: Color(0xFFf1faee),
       appBar: AppBar(
@@ -178,19 +193,26 @@ class _NewRecipeState extends State<NewRecipe> {
     final List<FileObject> new_listOfFiles =
         await supabase.storage.from("Photos").list();
     final int listLength = new_listOfFiles.length - 1;
+    final avatarrrr = generateGravatarImageUrl(emailll!, 80);
     var newObj = {
       'image_url': publicUrl,
       'recipe_name': titleController.text,
       'ingredients': ingriedientsController.text,
       'steps': steps,
       'created_by': extractUsername(emailll!),
-      'avatar_url': generateGravatarImageUrl(emailll!)
+      'avatar_url': generateGravatarImageUrl(emailll!, 80)
     };
+    print(generateGravatarImageUrl(emailll!, 80));
+    print(avatarararara);
+    print(emailll!);
+    print(avatarrrr);
     var newJson = jsonEncode(newObj);
 
     await supabase.from("recipesJsons").insert([
-      {"id": listLength, "JSON": newJson}
+      {"id": listLength, "JSON": newJson, "created_by": emailll}
     ]);
+    
+
 
     Navigator.pop(context);
     setState(() {
