@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 import 'package:supabase/supabase.dart';
 import 'package:crypto/crypto.dart';
-import'package:universal_io/io.dart';
+import 'package:universal_io/io.dart';
 
 File? imageFile;
 List<TextFieldModel> textFields = [];
@@ -184,20 +184,12 @@ class _NewRecipeState extends State<NewRecipe> {
     final List<FileObject> listOfPhotos =
         await supabase.storage.from("Photos").list();
 
-    if (kIsWeb) {
-      var avatarFile = File(imageFile!.path);
-      final avatarfileBytes = await avatarFile.readAsBytes();
-      await supabase.storage.from('Photos').uploadBinary(
-          listOfPhotos.length.toString(), avatarfileBytes,
-          fileOptions: const FileOptions(cacheControl: '3600', upsert: false));
-    } else {
-      var avatarFile = File(imageFile!.path);
-      final String path = await supabase.storage.from('Photos').upload(
-            listOfPhotos.length.toString(),
-            avatarFile,
-            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
-          );
-    }
+
+    final fileBytes = await imageFile!.readAsBytes();
+    final response = await supabase.storage.from("Photos").upload(
+        listOfPhotos.length.toString() + "a", fileBytes as File,
+        fileOptions: FileOptions(cacheControl: "3600", upsert: false));
+
     //print("First path: $path");
     final String publicUrl = supabase.storage
         .from('Photos')

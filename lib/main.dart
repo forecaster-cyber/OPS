@@ -151,6 +151,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List widgets = [recipesPage(voidCallback: refresh), profilePage()];
     return Scaffold(
         bottomNavigationBar: NavigationBar(
           indicatorColor: Color(0xFF415d59),
@@ -209,22 +210,34 @@ class _MainScreenState extends State<MainScreen> {
           ),
           backgroundColor: Theme.of(context).primaryColor,
         ),
-        body: ProfilePage
-            ? profilePage()
-            : SafeArea(
-                child: Center(
-                  child: RefreshIndicator(
-                    child: ListView.builder(
-                      itemCount: objectsList.length,
-                      itemBuilder: (context, index) {
-                        return RecipeWidget(
-                          values: objectsList[index],
-                        );
-                      },
-                    ),
-                    onRefresh: refresh,
-                  ),
-                ),
-              ));
+        body: widgets[_currentIndex]);
+  }
+}
+
+class recipesPage extends StatefulWidget {
+  const recipesPage({super.key, required this.voidCallback});
+  final Future<void> Function() voidCallback;
+  @override
+  State<recipesPage> createState() => _recipesPageState();
+}
+
+class _recipesPageState extends State<recipesPage> {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Center(
+        child: RefreshIndicator(
+          child: ListView.builder(
+            itemCount: objectsList.length,
+            itemBuilder: (context, index) {
+              return RecipeWidget(
+                values: objectsList[index],
+              );
+            },
+          ),
+          onRefresh: widget.voidCallback,
+        ),
+      ),
+    );
   }
 }
