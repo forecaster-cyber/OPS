@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zushi_and_karrot/main.dart';
 import 'upload.dart';
 import 'recipe.dart';
+import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class profilePage extends StatefulWidget {
   const profilePage({super.key});
@@ -29,9 +30,9 @@ class _profilePageState extends State<profilePage> {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
         Container(
-          height: 250,
-          width: 250,
-          child: PageView.builder(
+          height: 400,
+          width: 400,
+          child: ListView.builder(
             itemCount: myPostsList.length,
             itemBuilder: (context, index) {
               return RecipeWidget(

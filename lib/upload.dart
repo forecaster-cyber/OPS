@@ -185,11 +185,20 @@ class _NewRecipeState extends State<NewRecipe> {
         await supabase.storage.from("Photos").list();
 
 
-    final fileBytes = await imageFile!.readAsBytes();
-    final response = await supabase.storage.from("Photos").upload(
-        listOfPhotos.length.toString() + "a", fileBytes as File,
-        fileOptions: FileOptions(cacheControl: "3600", upsert: false));
-
+    if (kIsWeb) {
+      var avatarFile = File(imageFile!.path);
+      final avatarfileBytes = await avatarFile.readAsBytes();
+      await supabase.storage.from('Photos').uploadBinary(
+          listOfPhotos.length.toString(), avatarfileBytes,
+          fileOptions: const FileOptions(cacheControl: '3600', upsert: false));
+    } else {
+      var avatarFile = File(imageFile!.path);
+      final String path = await supabase.storage.from('Photos').upload(
+            listOfPhotos.length.toString(),
+            avatarFile,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          );
+    }
     //print("First path: $path");
     final String publicUrl = supabase.storage
         .from('Photos')
@@ -214,8 +223,9 @@ class _NewRecipeState extends State<NewRecipe> {
     var newJson = jsonEncode(newObj);
 
     await supabase.from("recipesJsons").insert([
-      {"id": listLength, "JSON": newJson, "created_by": emailll}
+      {"id": listLength, "JSON": newJson, "created_by": extractUsername(emailll!)}
     ]);
+    
 
     Navigator.pop(context);
     setState(() {

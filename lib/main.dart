@@ -53,7 +53,7 @@ int _currentIndex = 0;
 bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
 bool ProfilePage = false;
-
+TextEditingController searchController = TextEditingController();
 Future<void> main() async {
   //objectsList.add(valuess);
   //objectsList.add(valuess);
@@ -81,6 +81,19 @@ Future<void> main() async {
   for (var amo in objectsList) {
     print(amo);
   }
+  final List listOfMyPostsJsons = await supabase
+      .from("recipesJsons")
+      .select<PostgrestList>("JSON")
+      .textSearch("created_by",extractUsername(emailll!) );
+  for (var element in listOfMyPostsJsons) {
+    // print(element["JSON"]);
+
+    Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+    // print(decJson);
+
+    myPostsList.add(decJson);
+  }
+  print(myPostsList);
   runApp(MainApp());
   // print(valuess["recipe_name"]);
   // print(json);
@@ -187,18 +200,85 @@ class _MainScreenState extends State<MainScreen> {
           scrolledUnderElevation: 0.0,
           backgroundColor: Theme.of(context).primaryColor,
           foregroundColor: Colors.white,
-          title: kIsWeb
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('zushi&karrot'),
-                    IconButton(
-                      onPressed: refresh,
-                      icon: Icon(Icons.refresh),
-                    )
-                  ],
-                )
-              : Text('zushi&karrot'),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Zushi&Karrot"),
+              IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Container(
+                          child: Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: 300,
+                                color: Colors.white,
+                                height: 200,
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        "Search!",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 40,
+                                            color: Colors.black),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Material(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextField(
+                                              controller: searchController,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                          onPressed: () async {
+                                            objectsList = [];
+                                            final List listOfsearchedJsons =
+                                                await supabase
+                                                    .from("recipesJsons")
+                                                    .select<PostgrestList>(
+                                                        "JSON")
+                                                    .textSearch("created_by",
+                                                        searchController.text,
+                                                        type: TextSearchType
+                                                            .websearch);
+                                            for (var element
+                                                in listOfsearchedJsons) {
+                                              // print(element["JSON"]);
+
+                                              Map<String, dynamic> decJson =
+                                                  jsonDecode(element["JSON"]);
+                                              // print(decJson);
+
+                                              objectsList.add(decJson);
+                                            }
+                                            setState(() {
+                                              objectsList = objectsList;
+                                            });
+                                            print(objectsList);
+                                          },
+                                          icon: Icon(Icons.search))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.search_sharp)),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -222,6 +302,7 @@ class recipesPage extends StatefulWidget {
 }
 
 class _recipesPageState extends State<recipesPage> {
+  var finalobjectslist = objectsList.reversed;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
