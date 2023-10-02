@@ -1,44 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:zushi_and_karrot/main.dart';
+import 'recipe_page.dart';
 import 'upload.dart';
-import 'recipe.dart';
-import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
-class profilePage extends StatefulWidget {
-  const profilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<profilePage> createState() => _profilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _profilePageState extends State<profilePage> {
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    print(myPostsList);
     return SafeArea(
         child: Center(
       child: Column(children: [
-        SizedBox(
+       const  SizedBox(
           height: 20,
         ),
         CircleAvatar(
-          backgroundImage: NetworkImage(generateGravatarImageUrl(emailll!, 80)),
+          backgroundImage:
+              NetworkImage(generateGravatarImageUrl(emailll!, 320)),
           radius: 80,
         ),
         Text(
           extractUsername(emailll!),
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
-        Container(
-          height: 400,
-          width: 400,
-          child: ListView.builder(
-            itemCount: myPostsList.length,
-            itemBuilder: (context, index) {
-              return RecipeWidget(
-                values: myPostsList[index],
-              );
-            },
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            child: SizedBox(
+                height: 400,
+                width: 400,
+                child: GridView.builder(
+                  itemCount: myPostsList.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RecipePage(
+                                    index: index,
+                                    // checking if needing to view a user created post, or another user post, because its 2 different lists, can be confused with the index
+                                    currentUserCreated: true,
+                                  )),
+                        );
+                      },
+                      child: Image.network(myPostsList[index]["image_url"]),
+                    );
+                  },
+                )),
           ),
         )
       ]),

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart';
 import 'package:supabase/supabase.dart';
 import 'package:crypto/crypto.dart';
@@ -22,11 +21,6 @@ class NewRecipe extends StatefulWidget {
 String generateGravatarImageUrl(String email, int size) {
   final hash = md5.convert(utf8.encode(email.trim().toLowerCase()));
   final url = 'https://www.gravatar.com/avatar/$hash?s=$size';
-  print(url);
-  print(url);
-  print(url);
-  print(url);
-  print(url);
   return url;
 }
 

@@ -1,13 +1,11 @@
 import 'dart:core';
 //import 'dart:js_interop';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase/supabase.dart';
 import 'package:zushi_and_karrot/auth.dart';
 import 'package:zushi_and_karrot/profile.dart';
+import 'package:zushi_and_karrot/recipe_page.dart';
 import 'dart:convert';
-import 'recipe.dart';
 import 'upload.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signinsignup.dart';
@@ -53,7 +51,6 @@ String? passowrdd = '';
 int _currentIndex = 0;
 bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
-bool ProfilePage = false;
 TextEditingController searchController = TextEditingController();
 Future<void> main() async {
   //objectsList.add(valuess);
@@ -65,10 +62,10 @@ Future<void> main() async {
   );
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  final String? saved_email = prefs.getString('email');
-  final String? saved_password = prefs.getString('password');
-  emailll = saved_email;
-  passowrdd = saved_password;
+  final String? savedEmail = prefs.getString('email');
+  final String? savedPassword = prefs.getString('password');
+  emailll = savedEmail;
+  passowrdd = savedPassword;
   final List listOfJsons =
       await supabase.from("recipesJsons").select<PostgrestList>("JSON");
   for (var element in listOfJsons) {
@@ -79,13 +76,11 @@ Future<void> main() async {
 
     objectsList.add(decJson);
   }
-  for (var amo in objectsList) {
-    print(amo);
-  }
   final List listOfMyPostsJsons = await supabase
       .from("recipesJsons")
       .select<PostgrestList>("JSON")
-      .textSearch("created_by", extractUsername(emailll??= "removeme@gmail.com"  ));
+      .textSearch(
+          "created_by", extractUsername(emailll ??= "example@gmail.com"));
   for (var element in listOfMyPostsJsons) {
     // print(element["JSON"]);
 
@@ -94,14 +89,15 @@ Future<void> main() async {
 
     myPostsList.add(decJson);
   }
-  print(myPostsList);
-  runApp(MainApp());
+  runApp(const MainApp());
   // print(valuess["recipe_name"]);
   // print(json);
   // print(valuess["steps"][0]);
 }
 
 class MainApp extends StatefulWidget {
+  const MainApp({super.key});
+
   @override
   State<MainApp> createState() => _MainAppState();
 }
@@ -112,13 +108,14 @@ class _MainAppState extends State<MainApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        fontFamily: 'Varela',
         colorScheme: ColorScheme.fromSwatch().copyWith(
           // primary: Color(0xFFe63946),
-          primary: Color(0xFF415d59),
+          primary: const Color(0xFF415d59),
           // secondary: Color(0xFFe63946),
-          secondary: Color(0xFFe7eeed),
+          secondary: const Color(0xFFe7eeed),
           // background: Color(0xFFfbf5f3),
-          background: Color(0xFFf6f9f8),
+          background: const Color(0xFFf6f9f8),
         ),
         inputDecorationTheme: const InputDecorationTheme(
           enabledBorder: UnderlineInputBorder(
@@ -127,7 +124,7 @@ class _MainAppState extends State<MainApp> {
         ),
         useMaterial3: true,
         // primaryColor: Color(0xFFe63946),
-        primaryColor: Color(0xFF415d59),
+        primaryColor: const Color(0xFF415d59),
       ),
       home: LoginPage(authManager),
       routes: {
@@ -138,6 +135,8 @@ class _MainAppState extends State<MainApp> {
 }
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -158,30 +157,34 @@ class _MainScreenState extends State<MainScreen> {
         objectsList.add(decJson);
       });
     }
-    for (var amo in objectsList) {
-      print(amo);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List widgets = [recipesPage(voidCallback: refresh), profilePage()];
+    List widgets = [RecipesPage(voidCallback: refresh), const ProfilePage()];
     return Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.grey.shade100,
         bottomNavigationBar: NavigationBar(
-          indicatorColor: Color(0xFF415d59),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          indicatorColor: const Color(0xFF415d59),
           selectedIndex: _currentIndex,
           onDestinationSelected: (value) {
             setState(() {
-              if (value == 0) {
-                ProfilePage = false;
-              } else if (value == 1) {
-                ProfilePage = true;
-              }
+              // if (value == 0) {
+              //   ProfilePage = false;
+              // } else if (value == 1) {
+
+              // }
+              // else if (value == 2) {
+              //   ProfilePage = true;
+              // }
 
               _currentIndex = value;
             });
           },
-          destinations: [
+          destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
               label: "Home",
@@ -196,128 +199,223 @@ class _MainScreenState extends State<MainScreen> {
         ),
         // backgroundColor: Color(0xFFf1faee),
         // backgroundColor: Colors.white,
-        appBar: AppBar(
-          centerTitle: true,
-          scrolledUnderElevation: 0.0,
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Colors.white,
-          actions: [Padding(
-            padding: const EdgeInsets.only(right: 25.0),
-            child: IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Container(
-                        child: Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Container(
-                              width: 300,
-                              color: Color(0xFFf6f9f8),
-                              height: 200,
-                              child: Center(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "Search!",
-                                      style: TextStyle(
-                                          decoration: TextDecoration.none,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 40,
-                                          color: Colors.black),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Material(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: TextField(
-                                            controller: searchController,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    IconButton(
-                                        onPressed: () async {
-                                          objectsList = [];
-                                          final List listOfsearchedJsons =
-                                              await supabase
-                                                  .from("recipesJsons")
-                                                  .select<PostgrestList>("JSON")
-                                                  .textSearch("created_by",
-                                                      searchController.text,
-                                                      type: TextSearchType
-                                                          .websearch);
-                                          for (var element
-                                              in listOfsearchedJsons) {
-                                            // print(element["JSON"]);
-          
-                                            Map<String, dynamic> decJson =
-                                                jsonDecode(element["JSON"]);
-                                            // print(decJson);
-          
-                                            objectsList.add(decJson);
-                                          }
-                                          setState(() {
-                                            objectsList = objectsList;
-                                          });
-                                          print(objectsList);
-                                        },
-                                        icon: Icon(Icons.search))
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                icon: Icon(Icons.search_sharp)),
-          ),],
-          title: Text("Zushi&Karrot"),
-        ),
+
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.pushNamed(context, '/newRecipe');
           },
-          child: Icon(
+          backgroundColor: Theme.of(context).primaryColor,
+          child: const Icon(
             Icons.add_rounded,
             size: 38,
           ),
-          backgroundColor: Theme.of(context).primaryColor,
         ),
         body: widgets[_currentIndex]);
   }
 }
 
-class recipesPage extends StatefulWidget {
-  const recipesPage({super.key, required this.voidCallback});
+class RecipesPage extends StatefulWidget {
+  const RecipesPage({super.key, required this.voidCallback});
   final Future<void> Function() voidCallback;
   @override
-  State<recipesPage> createState() => _recipesPageState();
+  State<RecipesPage> createState() => _RecipesPageState();
 }
 
-class _recipesPageState extends State<recipesPage> {
+class _RecipesPageState extends State<RecipesPage> {
   var finalobjectslist = objectsList.reversed;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Center(
-        child: RefreshIndicator(
-          child: ListView.builder(
-            itemCount: objectsList.length,
-            itemBuilder: (context, index) {
-              return RecipeWidget(
-                values: objectsList[index],
-              );
-            },
+        child: Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Good morning,",
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
+                  Text(
+                    "what would you like \nto cook today?",
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+              CircleAvatar(
+                backgroundImage:
+                    NetworkImage(generateGravatarImageUrl(emailll!, 80)),
+                radius: 25,
+              ),
+            ],
           ),
-          onRefresh: widget.voidCallback,
         ),
-      ),
-    );
+        Padding(
+          padding: const EdgeInsets.only(bottom: 50.0),
+          child: TextField(
+            onSubmitted: (value) async {
+              objectsList = [];
+              final List listOfsearchedJsons = await supabase
+                  .from("recipesJsons")
+                  .select<PostgrestList>("JSON")
+                  .textSearch("created_by", searchController.text,
+                      type: TextSearchType.websearch);
+              for (var element in listOfsearchedJsons) {
+                // print(element["JSON"]);
+
+                Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+                // print(decJson);
+
+                objectsList.add(decJson);
+              }
+              setState(() {
+                objectsList = objectsList;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: "search any recipes",
+              hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
+              prefixIcon: const Icon(Icons.search),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              filled: true,
+              fillColor: Colors.white,
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                    width: 3, color: Colors.transparent), //<-- SEE HERE
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                    width: 3, color: Colors.transparent), //<-- SEE HERE
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 30.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "categories",
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: SizedBox(
+                  height: 75,
+                  child: ListView.builder(
+                    shrinkWrap: false,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                          ),
+                          width: 75,
+                          height: 75,
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "🍕",
+                                style: TextStyle(fontSize: 28),
+                              ),
+                              Text(
+                                "pizza",
+                                style: TextStyle(color: Colors.black54),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+                // Wrap the "Recommended" column with Expanded
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Recommended",
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: SizedBox(
+                    height: 150,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: objectsList.length,
+                      /*
+                        var recipe_name = widget.values["recipe_name"];
+                        var image_url = widget.values["image_url"];
+                        var created_by = widget.values["created_by"];
+                        var ingerdiants = widget.values["ingredients"];
+                        var avatar_url = widget.values["avatar_url"];
+                      */
+                      itemBuilder: (context, index) {
+                        if (index != 1) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 15.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RecipePage(
+                                            index: index,
+                                            // checking if needing to view a user created post, or another user post, because its 2 different lists, can be confused with the index
+                                            currentUserCreated: false,
+                                          )),
+                                );
+                              },
+                              child: SizedBox(
+                                width: 150,
+                                height: 150,
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: Image.network(
+                                      objectsList[index]["image_url"],
+                                      width: 150,
+                                      height: 150,
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                            ),
+                          );
+                        }
+                        return Container();
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ))
+          ],
+        ),
+      ]),
+    ));
   }
 }
