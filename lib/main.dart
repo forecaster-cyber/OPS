@@ -1,4 +1,5 @@
 import 'dart:core';
+//import 'dart:js_interop';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,7 @@ Future<void> main() async {
   final List listOfMyPostsJsons = await supabase
       .from("recipesJsons")
       .select<PostgrestList>("JSON")
-      .textSearch("created_by", extractUsername(emailll!));
+      .textSearch("created_by", extractUsername(emailll??= "removeme@gmail.com"  ));
   for (var element in listOfMyPostsJsons) {
     // print(element["JSON"]);
 
