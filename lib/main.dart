@@ -108,7 +108,7 @@ class _MainAppState extends State<MainApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Varela',
+        // fontFamily: 'Varela',
         colorScheme: ColorScheme.fromSwatch().copyWith(
           // primary: Color(0xFFe63946),
           primary: const Color(0xFF415d59),
@@ -226,196 +226,216 @@ class _RecipesPageState extends State<RecipesPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 30.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Good morning,",
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
-                  ),
-                  Text(
-                    "what would you like \nto cook today?",
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-              CircleAvatar(
-                backgroundImage:
-                    NetworkImage(generateGravatarImageUrl(emailll!, 80)),
-                radius: 25,
-              ),
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 30.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Good morning,",
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                    Text(
+                      "what would you like \nto cook today?",
+                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+                CircleAvatar(
+                  backgroundImage:
+                      NetworkImage(generateGravatarImageUrl(emailll!, 80)),
+                  radius: 25,
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 50.0),
-          child: TextField(
-            onSubmitted: (value) async {
-              objectsList = [];
-              final List listOfsearchedJsons = await supabase
-                  .from("recipesJsons")
-                  .select<PostgrestList>("JSON")
-                  .textSearch("created_by", searchController.text,
-                      type: TextSearchType.websearch);
-              for (var element in listOfsearchedJsons) {
-                // print(element["JSON"]);
-
-                Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
-                // print(decJson);
-
-                objectsList.add(decJson);
-              }
-              setState(() {
-                objectsList = objectsList;
-              });
-            },
-            decoration: InputDecoration(
-              hintText: "search any recipes",
-              hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
-              prefixIcon: const Icon(Icons.search),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              filled: true,
-              fillColor: Colors.white,
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                    width: 3, color: Colors.transparent), //<-- SEE HERE
-                borderRadius: BorderRadius.circular(50.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                    width: 3, color: Colors.transparent), //<-- SEE HERE
-                borderRadius: BorderRadius.circular(50.0),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50.0),
+            child: TextField(
+              onSubmitted: (value) async {
+                objectsList = [];
+                final List listOfsearchedJsons = await supabase
+                    .from("recipesJsons")
+                    .select<PostgrestList>("JSON")
+                    .textSearch("created_by", searchController.text,
+                        type: TextSearchType.websearch);
+                for (var element in listOfsearchedJsons) {
+                  // print(element["JSON"]);
+        
+                  Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+                  // print(decJson);
+        
+                  objectsList.add(decJson);
+                }
+                setState(() {
+                  objectsList = objectsList;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "search any recipes",
+                hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
+                prefixIcon: const Icon(Icons.search),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                filled: true,
+                fillColor: Colors.white,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                      width: 3, color: Colors.transparent), //<-- SEE HERE
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                      width: 3, color: Colors.transparent), //<-- SEE HERE
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "categories",
-                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: SizedBox(
-                  height: 75,
-                  child: ListView.builder(
-                    shrinkWrap: false,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          width: 75,
-                          height: 75,
-                          child: const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "🍕",
-                                style: TextStyle(fontSize: 28),
-                              ),
-                              Text(
-                                "pizza",
-                                style: TextStyle(color: Colors.black54),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-                // Wrap the "Recommended" column with Expanded
-                child: Column(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 30.0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Recommended",
+                  "categories",
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: SizedBox(
-                    height: 150,
+                    height: 75,
                     child: ListView.builder(
+                      shrinkWrap: false,
                       scrollDirection: Axis.horizontal,
-                      itemCount: objectsList.length,
-                      /*
-                        var recipe_name = widget.values["recipe_name"];
-                        var image_url = widget.values["image_url"];
-                        var created_by = widget.values["created_by"];
-                        var ingerdiants = widget.values["ingredients"];
-                        var avatar_url = widget.values["avatar_url"];
-                      */
+                      itemCount: 10,
                       itemBuilder: (context, index) {
-                        if (index != 1) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 15.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RecipePage(
-                                            index: index,
-                                            // checking if needing to view a user created post, or another user post, because its 2 different lists, can be confused with the index
-                                            currentUserCreated: false,
-                                          )),
-                                );
-                              },
-                              child: SizedBox(
-                                width: 150,
-                                height: 150,
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Image.network(
-                                      objectsList[index]["image_url"],
-                                      width: 150,
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                    )),
-                              ),
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
                             ),
-                          );
-                        }
-                        return Container();
+                            width: 75,
+                            height: 75,
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "🍕",
+                                  style: TextStyle(fontSize: 28),
+                                ),
+                                Text(
+                                  "pizza",
+                                  style: TextStyle(color: Colors.black54),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
                       },
                     ),
                   ),
                 ),
               ],
-            ))
-          ],
-        ),
-      ]),
-    ));
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                  // Wrap the "Recommended" column with Expanded
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Recommended",
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: SizedBox(
+                      height: 300,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: objectsList.length,
+                        /*
+                          var recipe_name = widget.values["recipe_name"];
+                          var image_url = widget.values["image_url"];
+                          var created_by = widget.values["created_by"];
+                          var ingerdiants = widget.values["ingredients"];
+                          var avatar_url = widget.values["avatar_url"];
+                        */
+                        itemBuilder: (context, index) {
+                          if (index != 1) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 15.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => RecipePage(
+                                              index: index,
+                                              // checking if needing to view a user created post, or another user post, because its 2 different lists, can be confused with the index
+                                              currentUserCreated: false,
+                                            )),
+                                  );
+                                },
+                                child: SizedBox(
+                                  width: 150,
+                                  height: 300,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                          borderRadius: BorderRadius.circular(15),
+                                          child: Image.network(
+                                            objectsList[index]["image_url"],
+                                            width: 150,
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                          )),
+        
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 8.0),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(objectsList[index]["recipe_name"], style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+                                                Text(objectsList[index]["created_by"], style: TextStyle(fontSize: 14, color: Colors.black54),),
+                                              ],
+                                            ),
+                                          )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return Container();
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ))
+            ],
+          ),
+
+          
+              ]),
+            ),
+        ));
   }
 }

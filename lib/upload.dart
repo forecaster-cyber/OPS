@@ -36,6 +36,7 @@ String extractUsername(String email) {
 
 TextEditingController ingriedientsController = TextEditingController();
 TextEditingController titleController = TextEditingController();
+TextEditingController durationController = TextEditingController();
 
 class _NewRecipeState extends State<NewRecipe> {
   @override
@@ -47,11 +48,6 @@ class _NewRecipeState extends State<NewRecipe> {
 
   @override
   Widget build(BuildContext context) {
-    print("object");
-    print("object");
-    print("object");
-    print("object");
-    print(generateGravatarImageUrl("forecaster1310@gmail.com", 80));
     return Scaffold(
       // backgroundColor: Color(0xFFf1faee),
       appBar: AppBar(
@@ -92,9 +88,25 @@ class _NewRecipeState extends State<NewRecipe> {
               ),
             ),
             const SizedBox(height: 26),
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: 'Title:'),
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: TextField(
+                    controller: titleController,
+                    decoration: InputDecoration(labelText: 'Title:'),
+                  ),
+                ),
+                SizedBox(width: 10,),
+                Expanded(
+                  flex: 1,
+                  child: TextField(
+                    controller: durationController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(labelText: 'mintues'),
+                  ),
+                ),
+              ],
             ),
             SizedBox(height: 34),
             TextField(
@@ -211,7 +223,8 @@ class _NewRecipeState extends State<NewRecipe> {
       'ingredients': ingriedientsController.text,
       'steps': steps,
       'created_by': extractUsername(emailll!),
-      'avatar_url': generateGravatarImageUrl(emailll!, 80)
+      'avatar_url': generateGravatarImageUrl(emailll!, 80),
+      'duration': durationController.text
     };
     print(generateGravatarImageUrl(emailll!, 80));
     print(avatarararara);

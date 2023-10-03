@@ -27,7 +27,9 @@ class _RecipePageState extends State<RecipePage> {
           icon: Icon(
             Icons.arrow_back_rounded,
             color: Colors.grey.shade100,
-            shadows: const <Shadow>[Shadow(color: Colors.black, blurRadius: 5.0)],
+            shadows: const <Shadow>[
+              Shadow(color: Colors.black, blurRadius: 5.0)
+            ],
             size: 42,
           ),
         ),
@@ -38,8 +40,9 @@ class _RecipePageState extends State<RecipePage> {
             alignment: Alignment.topCenter,
             child: ClipRRect(
               child: Image.network(
-                widget.currentUserCreated ? myPostsList[widget.index]["image_url"] :
-                objectsList[widget.index]["image_url"],
+                widget.currentUserCreated
+                    ? myPostsList[widget.index]["image_url"]
+                    : objectsList[widget.index]["image_url"],
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.width,
               ),
@@ -58,54 +61,56 @@ class _RecipePageState extends State<RecipePage> {
                 padding: const EdgeInsets.all(25.0),
                 child: ListView.builder(
                   itemCount: 1, // Set the itemCount to 1
-                  padding:const  EdgeInsets.only(top: 0), // Remove top padding
+                  padding: const EdgeInsets.only(top: 0), // Remove top padding
                   itemBuilder: (BuildContext context, int index) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0, bottom: 30),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    widget.currentUserCreated
-                                        ? myPostsList[widget.index]['recipe_name']
-                                            
-                                        : objectsList[widget.index]
-                                            ["recipe_name"],
-                                    style:const  TextStyle(
-                                        fontSize: 24, color: Colors.black),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                  Flexible(
                                     child: Text(
                                       widget.currentUserCreated
-                                          ? myPostsList[widget.index]['created_by']
-                                              
+                                          ? myPostsList[widget.index]
+                                              ['recipe_name']
                                           : objectsList[widget.index]
-                                              ["created_by"],
+                                              ['recipe_name'],
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      softWrap: false,
                                       style: const TextStyle(
-                                          fontSize: 14, color: Colors.black54),
+                                          fontSize: 24, color: Colors.black),
                                     ),
                                   ),
-                                  const Text(
-                                    "30 min",
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.black54),
-                                  )
+                                  CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      widget.currentUserCreated
+                                          ? myPostsList[widget.index]
+                                              ['avatar_url']
+                                          : objectsList[widget.index]
+                                              ['avatar_url'],
+                                    ),
+                                    radius: 20,
+                                  ),
                                 ],
                               ),
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(widget
-                                        .currentUserCreated
-                                    ? myPostsList[widget.index]['avatar_url']
-                                    : objectsList[widget.index]["avatar_url"]),
-                                radius: 20,
+                              Text(
+                                widget.currentUserCreated
+                                    ? myPostsList[widget.index]['created_by']
+                                    : objectsList[widget.index]['created_by'],
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black54),
+                              ),
+                               Text(
+                                widget.currentUserCreated ? (myPostsList[widget.index]['duration'] ?? "? ") + " min" : (objectsList[widget.index]['duration']?? "? ") + " min",
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black54),
                               ),
                             ],
                           ),
@@ -123,10 +128,9 @@ class _RecipePageState extends State<RecipePage> {
                               Text(
                                   widget.currentUserCreated
                                       ? myPostsList[widget.index]['ingredients']
-                                          
                                       : objectsList[widget.index]
                                           ['ingredients'],
-                                  style:const  TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 14, color: Colors.black54))
                             ],
                           ),
@@ -160,7 +164,7 @@ class _RecipePageState extends State<RecipePage> {
                                           const EdgeInsets.only(bottom: 8.0),
                                       child: Text(
                                         '${index + 1}. $stepText',
-                                        style:const  TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 14,
                                             color: Colors.black54),
                                       ),
