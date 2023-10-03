@@ -226,6 +226,44 @@ class RecipesPage extends StatefulWidget {
 }
 
 class _RecipesPageState extends State<RecipesPage> {
+  Future<List<double>> fetchOpenAIEmbeddings(String inputParam) async {
+    final String apiKey = "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";
+    final String apiUrl = "https://api.openai.com/v1/embeddings";
+
+    final Map<String, dynamic> requestBody = {
+      "input": inputParam,
+      "model": "text-embedding-ada-002"
+    };
+
+    final headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $apiKey",
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: headers,
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        var jsonBody = json.decode(response.body);
+        if (jsonBody['data'] is List && jsonBody['data'].isNotEmpty) {
+          var embedding = jsonBody['data'][0]['embedding'];
+          if (embedding is List) {
+            return embedding.cast<double>();
+          }
+        }
+        throw Exception("Invalid data format in the response.");
+      } else {
+        throw Exception("Failed to fetch data");
+      }
+    } catch (e) {
+      throw Exception("Error: $e");
+    }
+  }
+
   var finalobjectslist = objectsList.reversed;
   @override
   Widget build(BuildContext context) {
@@ -268,6 +306,12 @@ class _RecipesPageState extends State<RecipesPage> {
             child: TextField(
               controller: searchController,
               onSubmitted: (value) async {
+                final List data = await supabase.rpc('find_closest_vectors',
+                    params: {
+                      'input_vector':
+                          await fetchOpenAIEmbeddings(searchController.text)
+                    });
+                print(data);
                 List objectsList_temp = [];
                 final List listOfsearchedJsons = await supabase
                     .from("recipesJsons")
