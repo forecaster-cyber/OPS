@@ -222,7 +222,7 @@ class _NewRecipeState extends State<NewRecipe> {
     }
     Future<List<double>> fetchOpenAIEmbeddings(String inputParam) async {
       final String apiKey =
-          "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";
+          "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";
       final String apiUrl = "https://api.openai.com/v1/embeddings";
 
       final Map<String, dynamic> requestBody = {
