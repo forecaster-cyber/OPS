@@ -1,5 +1,6 @@
 import 'dart:core';
 //import 'dart:js_interop';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:zushi_and_karrot/auth.dart';
@@ -265,8 +266,9 @@ class _RecipesPageState extends State<RecipesPage> {
           Padding(
             padding: const EdgeInsets.only(bottom: 50.0),
             child: TextField(
+              controller: searchController,
               onSubmitted: (value) async {
-                objectsList = [];
+                List objectsList_temp = [];
                 final List listOfsearchedJsons = await supabase
                     .from("recipesJsons")
                     .select<PostgrestList>("JSON")
@@ -278,10 +280,10 @@ class _RecipesPageState extends State<RecipesPage> {
                   Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
                   // print(decJson);
 
-                  objectsList.add(decJson);
+                  objectsList_temp.add(decJson);
                 }
                 setState(() {
-                  objectsList = objectsList;
+                  objectsList = objectsList_temp;
                 });
               },
               decoration: InputDecoration(
