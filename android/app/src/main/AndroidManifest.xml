@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.INTERNET"/> <!-- Add this -->
+
     <application
         android:label="zushi_and_karrot"
         android:name="${applicationName}"

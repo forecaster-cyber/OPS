@@ -6,16 +6,14 @@ import 'auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  
 
   final AuthManager authManager;
   LoginPage(this.authManager, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    emailController.text = emailll ?? "";
-    passwordController.text = passowrdd ?? "";
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey.shade100,

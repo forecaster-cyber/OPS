@@ -41,7 +41,8 @@ var obj = {
   ],
   "created_by": "Yuval Noyman"
 };
-
+final TextEditingController emailController = TextEditingController();
+final TextEditingController passwordController = TextEditingController();
 List objectsList = [];
 final supabase = Supabase.instance.client;
 final AuthManager authManager = AuthManager();
@@ -89,6 +90,8 @@ Future<void> main() async {
 
     myPostsList.add(decJson);
   }
+  emailController.text = emailll ?? "";
+  passwordController.text = passowrdd ?? "";
   runApp(const MainApp());
   // print(valuess["recipe_name"]);
   // print(json);
@@ -227,9 +230,9 @@ class _RecipesPageState extends State<RecipesPage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(children: [
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 30.0),
             child: Row(
@@ -246,7 +249,8 @@ class _RecipesPageState extends State<RecipesPage> {
                     ),
                     Text(
                       "what would you like \nto cook today?",
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                      style:
+                          TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
@@ -270,10 +274,10 @@ class _RecipesPageState extends State<RecipesPage> {
                         type: TextSearchType.websearch);
                 for (var element in listOfsearchedJsons) {
                   // print(element["JSON"]);
-        
+
                   Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
                   // print(decJson);
-        
+
                   objectsList.add(decJson);
                 }
                 setState(() {
@@ -396,27 +400,40 @@ class _RecipesPageState extends State<RecipesPage> {
                                   width: 150,
                                   height: 300,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       ClipRRect(
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
                                           child: Image.network(
                                             objectsList[index]["image_url"],
                                             width: 150,
                                             height: 150,
                                             fit: BoxFit.cover,
                                           )),
-        
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 8.0),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(objectsList[index]["recipe_name"], style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
-                                                Text(objectsList[index]["created_by"], style: TextStyle(fontSize: 14, color: Colors.black54),),
-                                              ],
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              objectsList[index]["recipe_name"],
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500),
                                             ),
-                                          )
+                                            Text(
+                                              objectsList[index]["created_by"],
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black54),
+                                            ),
+                                          ],
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -432,10 +449,8 @@ class _RecipesPageState extends State<RecipesPage> {
               ))
             ],
           ),
-
-          
-              ]),
-            ),
-        ));
+        ]),
+      ),
+    ));
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -37,6 +38,7 @@ String extractUsername(String email) {
 TextEditingController ingriedientsController = TextEditingController();
 TextEditingController titleController = TextEditingController();
 TextEditingController durationController = TextEditingController();
+bool lodaing = false;
 
 class _NewRecipeState extends State<NewRecipe> {
   @override
@@ -56,116 +58,125 @@ class _NewRecipeState extends State<NewRecipe> {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _getFromGallery();
-                });
-              },
-              child: Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: imageFile != null
-                      ? Colors.transparent
-                      : Color(0xFF415d59),
-                ),
-                child: imageFile != null
-                    ? kIsWeb
-                        ? Image.network(imageFile!.path)
-                        : Image.file(imageFile!)
-                    : Center(
-                        child: Icon(
-                          Icons.add_a_photo,
-                          size: 48,
-                          color: Colors.white,
+      body: lodaing
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: EdgeInsets.all(16.0),
+              child: ListView(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _getFromGallery();
+                      });
+                    },
+                    child: Container(
+                      height: 200,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: imageFile != null
+                            ? Colors.transparent
+                            : Color(0xFF415d59),
+                      ),
+                      child: imageFile != null
+                          ? kIsWeb
+                              ? Image.network(imageFile!.path)
+                              : Image.file(imageFile!)
+                          : Center(
+                              child: Icon(
+                                Icons.add_a_photo,
+                                size: 48,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 26),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: TextField(
+                          controller: titleController,
+                          decoration: InputDecoration(labelText: 'Title:'),
                         ),
                       ),
-              ),
-            ),
-            const SizedBox(height: 26),
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: TextField(
-                    controller: titleController,
-                    decoration: InputDecoration(labelText: 'Title:'),
-                  ),
-                ),
-                SizedBox(width: 10,),
-                Expanded(
-                  flex: 1,
-                  child: TextField(
-                    controller: durationController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: 'mintues'),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 34),
-            TextField(
-              controller: ingriedientsController,
-              decoration: InputDecoration(labelText: 'Ingredients:'),
-            ),
-            SizedBox(height: 34),
-            Text('Steps:'),
-            for (int i = 0; i < textFields.length; i++) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: textFields[i].controller,
-                      decoration: InputDecoration(
-                        labelText: 'Step ${i + 1}',
+                      SizedBox(
+                        width: 10,
                       ),
-                    ),
-                  ),
-                  if (i == textFields.length - 1)
-                    IconButton(
-                      icon: Icon(
-                        Icons.add,
-                        color: Color(0xFF415d59),
+                      Expanded(
+                        flex: 1,
+                        child: TextField(
+                          controller: durationController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(labelText: 'mintues'),
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          // Create a new instance of TextEditingController for the new text field
-                          TextEditingController newController =
-                              TextEditingController();
-                          textFields
-                              .add(TextFieldModel(controller: newController));
-                        });
-                      },
+                    ],
+                  ),
+                  SizedBox(height: 34),
+                  TextField(
+                    controller: ingriedientsController,
+                    decoration: InputDecoration(labelText: 'Ingredients:'),
+                  ),
+                  SizedBox(height: 34),
+                  Text('Steps:'),
+                  for (int i = 0; i < textFields.length; i++) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: textFields[i].controller,
+                            decoration: InputDecoration(
+                              labelText: 'Step ${i + 1}',
+                            ),
+                          ),
+                        ),
+                        if (i == textFields.length - 1)
+                          IconButton(
+                            icon: Icon(
+                              Icons.add,
+                              color: Color(0xFF415d59),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                // Create a new instance of TextEditingController for the new text field
+                                TextEditingController newController =
+                                    TextEditingController();
+                                textFields.add(
+                                    TextFieldModel(controller: newController));
+                              });
+                            },
+                          ),
+                      ],
                     ),
+                    SizedBox(height: 16),
+                  ],
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () {
+                            getStepsOnSubmit();
+                            setState(() {
+                              lodaing = true;
+                            });
+                          },
+                          child: Text('Submit'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              SizedBox(height: 16),
-            ],
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      getStepsOnSubmit();
-                    },
-                    child: Text('Submit'),
-                  ),
-                ),
-              ],
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -238,11 +249,12 @@ class _NewRecipeState extends State<NewRecipe> {
         "JSON": newJson,
         "created_by": extractUsername(emailll!)
       }
-    ]);
-
-    Navigator.pop(context);
-    setState(() {
-      objectsList.add(newObj);
+    ]).then((value) {
+      setState(() {
+        objectsList.add(newObj);
+        lodaing = false;
+      });
+      Navigator.pop(context);
     });
   }
 }
