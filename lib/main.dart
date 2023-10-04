@@ -306,10 +306,12 @@ class _RecipesPageState extends State<RecipesPage> {
             child: TextField(
               controller: searchController,
               onSubmitted: (value) async {
-                final List data = await supabase.rpc('find_closest_vectors',
+                final List data = await supabase.rpc('match_documents',
                     params: {
-                      'input_vector':
-                          await fetchOpenAIEmbeddings(searchController.text)
+                      'query_embedding':
+                          await fetchOpenAIEmbeddings(searchController.text),
+                          'match_threshold': 0.5,
+                          'match_count': 2
                     });
                 print(data);
                 List objectsList_temp = [];
@@ -318,10 +320,10 @@ class _RecipesPageState extends State<RecipesPage> {
                     .select<PostgrestList>("JSON")
                     .textSearch("created_by", searchController.text,
                         type: TextSearchType.websearch);
-                for (var element in listOfsearchedJsons) {
+                for (var element in data) {
                   // print(element["JSON"]);
 
-                  Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+                  Map<String, dynamic> decJson = jsonDecode(element["content"]);
                   // print(decJson);
 
                   objectsList_temp.add(decJson);
