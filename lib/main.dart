@@ -12,6 +12,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signinsignup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+List names = [
+  'breakfast',
+  'dinner',
+  'lunch',
+  'breads',
+  'italian',
+  'mexaican',
+  'side dish',
+  'healthy'
+];
+
+List icons = ['🥞', '🍝', '🥙', '🍞', '🍕', '🌮', '🍟', '🥗'];
 List myPostsList = [];
 /*
 
@@ -270,7 +282,7 @@ class _RecipesPageState extends State<RecipesPage> {
     return SafeArea(
         child: SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.all(0),
         child: Column(children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 30.0),
@@ -278,41 +290,47 @@ class _RecipesPageState extends State<RecipesPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Good morning,",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                    Text(
-                      "what would you like \nto cook today?",
-                      style:
-                          TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0, right: 15, left: 15),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Good morning,",
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      ),
+                      Text(
+                        "what would you like \nto cook today?",
+                        style:
+                            TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
                 ),
-                CircleAvatar(
-                  backgroundImage:
-                      NetworkImage(generateGravatarImageUrl(emailll!, 80)),
-                  radius: 25,
+                Padding(
+                  padding: const EdgeInsets.only(right: 15.0, top: 15),
+                  child: CircleAvatar(
+                    backgroundImage:
+                        NetworkImage(generateGravatarImageUrl(emailll!, 80)),
+                    radius: 25,
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 50.0),
+            padding: const EdgeInsets.only(bottom: 50.0, left: 15, right: 15),
             child: TextField(
               controller: searchController,
               onSubmitted: (value) async {
-                final List data = await supabase.rpc('match_documents',
-                    params: {
-                      'query_embedding':
-                          await fetchOpenAIEmbeddings(searchController.text),
-                          'match_threshold': 0.5,
-                          'match_count': 2
-                    });
+                final List data =
+                    await supabase.rpc('match_documents', params: {
+                  'query_embedding':
+                      await fetchOpenAIEmbeddings(searchController.text),
+                  'match_threshold': 0.5,
+                  'match_count': 2
+                });
                 print(data);
                 List objectsList_temp = [];
                 final List listOfsearchedJsons = await supabase
@@ -358,9 +376,12 @@ class _RecipesPageState extends State<RecipesPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "categories",
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: const Text(
+                    "categories",
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -369,10 +390,10 @@ class _RecipesPageState extends State<RecipesPage> {
                     child: ListView.builder(
                       shrinkWrap: false,
                       scrollDirection: Axis.horizontal,
-                      itemCount: 10,
+                      itemCount: names.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: const EdgeInsets.only(left: 8.0),
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
@@ -380,15 +401,15 @@ class _RecipesPageState extends State<RecipesPage> {
                             ),
                             width: 75,
                             height: 75,
-                            child: const Column(
+                            child:  Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "🍕",
+                                  icons[index],
                                   style: TextStyle(fontSize: 28),
                                 ),
                                 Text(
-                                  "pizza",
+                                  names[index],
                                   style: TextStyle(color: Colors.black54),
                                 )
                               ],
@@ -410,9 +431,12 @@ class _RecipesPageState extends State<RecipesPage> {
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Recommended",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: const Text(
+                      "Recommended",
+                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
@@ -431,7 +455,7 @@ class _RecipesPageState extends State<RecipesPage> {
                         itemBuilder: (context, index) {
                           if (index != 1) {
                             return Padding(
-                              padding: const EdgeInsets.only(right: 15.0),
+                              padding: const EdgeInsets.only(left: 15),
                               child: GestureDetector(
                                 onTap: () {
                                   Navigator.push(
