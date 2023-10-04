@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 
 class RecipePage extends StatefulWidget {
-  final int index;
-  final bool currentUserCreated;
+  // final int index;
+  // final bool currentUserCreated;
+  final dynamic object;
   const RecipePage(
-      {super.key, required this.index, required this.currentUserCreated});
+      {super.key, required this.object});
 
   @override
   State<RecipePage> createState() => _RecipePageState();
@@ -40,9 +41,7 @@ class _RecipePageState extends State<RecipePage> {
             alignment: Alignment.topCenter,
             child: ClipRRect(
               child: Image.network(
-                widget.currentUserCreated
-                    ? myPostsList[widget.index]["image_url"]
-                    : objectsList[widget.index]["image_url"],
+                widget.object["image_url"],
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.width,
               ),
@@ -72,15 +71,12 @@ class _RecipePageState extends State<RecipePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      widget.currentUserCreated
-                                          ? myPostsList[widget.index]
-                                              ['recipe_name']
-                                          : objectsList[widget.index]
-                                              ['recipe_name'],
+                                      widget.object['recipe_name'],
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
                                       softWrap: false,
@@ -90,25 +86,21 @@ class _RecipePageState extends State<RecipePage> {
                                   ),
                                   CircleAvatar(
                                     backgroundImage: NetworkImage(
-                                      widget.currentUserCreated
-                                          ? myPostsList[widget.index]
-                                              ['avatar_url']
-                                          : objectsList[widget.index]
-                                              ['avatar_url'],
+                                      widget.object['avatar_url'],
                                     ),
                                     radius: 20,
                                   ),
                                 ],
                               ),
                               Text(
-                                widget.currentUserCreated
-                                    ? myPostsList[widget.index]['created_by']
-                                    : objectsList[widget.index]['created_by'],
+                                widget.object['created_by'],
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black54),
                               ),
-                               Text(
-                                widget.currentUserCreated ? (myPostsList[widget.index]['duration'] ?? "? ") + " min" : (objectsList[widget.index]['duration']?? "? ") + " min",
+                              Text(
+                                (widget.object['duration'] ??
+                                            "? ") +
+                                        " min",
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black54),
                               ),
@@ -126,10 +118,7 @@ class _RecipePageState extends State<RecipePage> {
                                     fontSize: 22, color: Colors.black),
                               ),
                               Text(
-                                  widget.currentUserCreated
-                                      ? myPostsList[widget.index]['ingredients']
-                                      : objectsList[widget.index]
-                                          ['ingredients'],
+                                  widget.object['ingredients'],
                                   style: const TextStyle(
                                       fontSize: 14, color: Colors.black54))
                             ],
@@ -148,16 +137,10 @@ class _RecipePageState extends State<RecipePage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: List<Widget>.generate(
-                                  widget.currentUserCreated
-                                      ? myPostsList[widget.index]['steps']
-                                          .length
-                                      : objectsList[widget.index]['steps']
+                                  widget.object['steps']
                                           .length,
                                   (index) {
-                                    final stepText = widget.currentUserCreated
-                                        ? myPostsList[widget.index]['steps']
-                                            [index]
-                                        : objectsList[widget.index]['steps']
+                                    final stepText = widget.object['steps']
                                             [index];
                                     return Padding(
                                       padding:

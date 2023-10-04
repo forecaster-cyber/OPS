@@ -45,9 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => RecipePage(
-                                    index: index,
-                                    // checking if needing to view a user created post, or another user post, because its 2 different lists, can be confused with the index
-                                    currentUserCreated: true,
+                                    object: myPostsList[index],
                                   )),
                         );
                       },

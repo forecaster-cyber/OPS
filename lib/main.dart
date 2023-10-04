@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:zushi_and_karrot/auth.dart';
 import 'package:zushi_and_karrot/profile.dart';
 import 'package:zushi_and_karrot/recipe_page.dart';
+import 'package:zushi_and_karrot/search_results_pafe.dart';
 import 'dart:convert';
 import 'upload.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -22,6 +23,16 @@ List names = [
   'side dish',
   'healthy'
 ];
+String greeting() {
+  var hour = DateTime.now().hour;
+  if (hour < 12) {
+    return 'Morning';
+  }
+  if (hour < 17) {
+    return 'Afternoon';
+  }
+  return 'Evening';
+}
 
 List icons = ['🥞', '🍝', '🥙', '🍞', '🍕', '🌮', '🍟', '🥗'];
 List myPostsList = [];
@@ -126,13 +137,13 @@ class _MainAppState extends State<MainApp> {
       theme: ThemeData(
         // fontFamily: 'Varela',
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          // primary: Color(0xFFe63946),
-          primary: const Color(0xFF415d59),
-          // secondary: Color(0xFFe63946),
-          secondary: const Color(0xFFe7eeed),
-          // background: Color(0xFFfbf5f3),
-          background: const Color(0xFFf6f9f8),
-        ),
+            // primary: Color(0xFFe63946),
+            primary: const Color(0xFF415d59),
+            // secondary: Color(0xFFe63946),
+            secondary: const Color(0xFFe7eeed),
+            // background: Color(0xFFfbf5f3),
+            background: const Color(0xFFf6f9f8),
+            brightness: Brightness.dark),
         inputDecorationTheme: const InputDecorationTheme(
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Color(0xFF415d59)),
@@ -291,19 +302,20 @@ class _RecipesPageState extends State<RecipesPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 15.0, right: 15, left: 15),
-                  child: const Column(
+                  padding:
+                      const EdgeInsets.only(top: 15.0, right: 15, left: 15),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Good morning,",
+                        'Good ' + greeting() + ",",
                         style: TextStyle(fontSize: 14, color: Colors.black54),
                       ),
                       Text(
                         "what would you like \nto cook today?",
-                        style:
-                            TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontSize: 28, fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -346,9 +358,13 @@ class _RecipesPageState extends State<RecipesPage> {
 
                   objectsList_temp.add(decJson);
                 }
-                setState(() {
-                  objectsList = objectsList_temp;
-                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SearchResultsPage(
+                          resultObjectslist: objectsList_temp,
+                          searchText: searchController.text)),
+                );
               },
               decoration: InputDecoration(
                 hintText: "search any recipes",
@@ -401,7 +417,7 @@ class _RecipesPageState extends State<RecipesPage> {
                             ),
                             width: 75,
                             height: 75,
-                            child:  Column(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
@@ -427,7 +443,6 @@ class _RecipesPageState extends State<RecipesPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Expanded(
-                  // Wrap the "Recommended" column with Expanded
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -435,7 +450,8 @@ class _RecipesPageState extends State<RecipesPage> {
                     padding: const EdgeInsets.only(left: 15.0),
                     child: const Text(
                       "Recommended",
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
                     ),
                   ),
                   Padding(
@@ -453,66 +469,58 @@ class _RecipesPageState extends State<RecipesPage> {
                           var avatar_url = widget.values["avatar_url"];
                         */
                         itemBuilder: (context, index) {
-                          if (index != 1) {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 15),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => RecipePage(
-                                              index: index,
-                                              // checking if needing to view a user created post, or another user post, because its 2 different lists, can be confused with the index
-                                              currentUserCreated: false,
-                                            )),
-                                  );
-                                },
-                                child: SizedBox(
-                                  width: 150,
-                                  height: 300,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          child: Image.network(
-                                            objectsList[index]["image_url"],
-                                            width: 150,
-                                            height: 150,
-                                            fit: BoxFit.cover,
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RecipePage(
+                                            object: objectsList[index],
                                           )),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              objectsList[index]["recipe_name"],
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                            Text(
-                                              objectsList[index]["created_by"],
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black54),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                );
+                              },
+                              child: SizedBox(
+                                width: 150,
+                                height: 300,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.network(
+                                          objectsList[index]["image_url"],
+                                          width: 150,
+                                          height: 150,
+                                          fit: BoxFit.cover,
+                                        )),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            objectsList[index]["recipe_name"],
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          Text(
+                                            objectsList[index]["created_by"],
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black54),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                            );
-                          }
-                          return Container();
+                            ),
+                          );
                         },
                       ),
                     ),
