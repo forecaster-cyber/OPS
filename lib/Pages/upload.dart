@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'main.dart';
+import '../main.dart';
 import 'package:supabase/supabase.dart';
 import 'package:crypto/crypto.dart';
-import 'package:universal_io/io.dart';
 import 'package:http/http.dart' as http;
 
 File? imageFile;
@@ -16,6 +15,8 @@ List<String> steps = [];
 String? avatarararara = '';
 
 class NewRecipe extends StatefulWidget {
+  const NewRecipe({super.key});
+
   @override
   _NewRecipeState createState() => _NewRecipeState();
 }

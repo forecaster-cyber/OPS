@@ -1,7 +1,7 @@
-import 'package:zushi_and_karrot/recipe_page.dart';
-import 'package:zushi_and_karrot/recipe_preview_componenet.dart';
+import 'recipe_page.dart';
+import 'package:zushi_and_karrot/components/recipe_preview_componenet.dart';
 
-import 'main.dart';
+
 import 'package:flutter/material.dart';
 
 class SearchResultsPage extends StatefulWidget {
@@ -33,7 +33,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                       },
                       icon: Icon(Icons.arrow_back)),
                   Text(
-                    " results for '" + widget.searchText + " '",
+                    " results for '" + widget.searchText + "'",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
                   )
                 ],

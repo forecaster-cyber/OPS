@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+// NOT USED
 class RecipeWidget extends StatefulWidget {
   final Map<String, dynamic> values;
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zushi_and_karrot/main.dart';
-import 'package:zushi_and_karrot/recipe_preview_componenet.dart';
+import 'package:zushi_and_karrot/components/recipe_preview_componenet.dart';
 import 'recipe_page.dart';
 import 'upload.dart';
 

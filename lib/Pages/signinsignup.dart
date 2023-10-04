@@ -1,8 +1,8 @@
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'main.dart';
+import '../main.dart';
 import 'package:flutter/material.dart';
-import 'auth.dart';
+import '../auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {

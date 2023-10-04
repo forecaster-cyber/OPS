@@ -1,19 +1,13 @@
 import 'dart:core';
-//import 'dart:js_interop';
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:zushi_and_karrot/auth.dart';
-import 'package:zushi_and_karrot/profile.dart';
-import 'package:zushi_and_karrot/recipe_page.dart';
-import 'package:zushi_and_karrot/recipe_preview_componenet.dart';
-import 'package:zushi_and_karrot/search_results_pafe.dart';
+import 'pages/profile.dart';
 import 'dart:convert';
-import 'upload.dart';
+import 'Pages/upload.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'signinsignup.dart';
+import 'Pages/signinsignup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'pages/home_page.dart';
 bool isLoading = false;
 List names = [
   'breakfast',
@@ -80,8 +74,6 @@ bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
 TextEditingController searchController = TextEditingController();
 Future<void> main() async {
-  //objectsList.add(valuess);
-  //objectsList.add(valuess);
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: supabaseUrl,
@@ -96,11 +88,7 @@ Future<void> main() async {
   final List listOfJsons =
       await supabase.from("recipesJsons").select<PostgrestList>("JSON");
   for (var element in listOfJsons) {
-    // print(element["JSON"]);
-
-    Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
-    // print(decJson);
-
+    Map<String, dynamic> decJson = jsonDecode(element["JSON"]); 
     objectsList.add(decJson);
   }
   final List listOfMyPostsJsons = await supabase
@@ -109,19 +97,12 @@ Future<void> main() async {
       .textSearch(
           "created_by", extractUsername(emailll ??= "example@gmail.com"));
   for (var element in listOfMyPostsJsons) {
-    // print(element["JSON"]);
-
     Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
-    // print(decJson);
-
     myPostsList.add(decJson);
   }
   emailController.text = emailll ?? "";
   passwordController.text = passowrdd ?? "";
   runApp(const MainApp());
-  // print(valuess["recipe_name"]);
-  // print(json);
-  // print(valuess["steps"][0]);
 }
 
 class MainApp extends StatefulWidget {
@@ -139,11 +120,8 @@ class _MainAppState extends State<MainApp> {
       theme: ThemeData(
         // fontFamily: 'Varela',
         colorScheme: ColorScheme.fromSwatch().copyWith(
-            // primary: Color(0xFFe63946),
             primary: const Color(0xFF415d59),
-            // secondary: Color(0xFFe63946),
             secondary: const Color(0xFFe7eeed),
-            // background: Color(0xFFfbf5f3),
             background: const Color(0xFFf6f9f8),
             brightness: Brightness.dark),
         inputDecorationTheme: const InputDecorationTheme(
@@ -152,7 +130,6 @@ class _MainAppState extends State<MainApp> {
           ),
         ),
         useMaterial3: true,
-        // primaryColor: Color(0xFFe63946),
         primaryColor: const Color(0xFF415d59),
       ),
       home: LoginPage(authManager),
@@ -178,10 +155,7 @@ class _MainScreenState extends State<MainScreen> {
       objectsList = [];
     });
     for (var element in listOfJsons) {
-      // print(element["JSON"]);
-
       Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
-      // print(decJson);
       setState(() {
         objectsList.add(decJson);
       });
@@ -190,7 +164,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List widgets = [RecipesPage(voidCallback: refresh), const ProfilePage()];
+    List widgets = [HomePage(voidCallback: refresh), const ProfilePage()];
     return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.grey.shade100,
@@ -201,15 +175,6 @@ class _MainScreenState extends State<MainScreen> {
           selectedIndex: _currentIndex,
           onDestinationSelected: (value) {
             setState(() {
-              // if (value == 0) {
-              //   ProfilePage = false;
-              // } else if (value == 1) {
-
-              // }
-              // else if (value == 2) {
-              //   ProfilePage = true;
-              // }
-
               _currentIndex = value;
             });
           },
@@ -226,9 +191,6 @@ class _MainScreenState extends State<MainScreen> {
             )
           ],
         ),
-        // backgroundColor: Color(0xFFf1faee),
-        // backgroundColor: Colors.white,
-
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.pushNamed(context, '/newRecipe');
@@ -243,274 +205,3 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-class RecipesPage extends StatefulWidget {
-  const RecipesPage({super.key, required this.voidCallback});
-  final Future<void> Function() voidCallback;
-  @override
-  State<RecipesPage> createState() => _RecipesPageState();
-}
-
-class _RecipesPageState extends State<RecipesPage> {
-  Future<List<double>> fetchOpenAIEmbeddings(String inputParam) async {
-    final String apiKey = "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";
-    final String apiUrl = "https://api.openai.com/v1/embeddings";
-
-    final Map<String, dynamic> requestBody = {
-      "input": inputParam,
-      "model": "text-embedding-ada-002"
-    };
-
-    final headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $apiKey",
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: headers,
-        body: json.encode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        var jsonBody = json.decode(response.body);
-        if (jsonBody['data'] is List && jsonBody['data'].isNotEmpty) {
-          var embedding = jsonBody['data'][0]['embedding'];
-          if (embedding is List) {
-            return embedding.cast<double>();
-          }
-        }
-        throw Exception("Invalid data format in the response.");
-      } else {
-        throw Exception("Failed to fetch data");
-      }
-    } catch (e) {
-      throw Exception("Error: $e");
-    }
-  }
-
-  var finalobjectslist = objectsList.reversed;
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-        child: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(0),
-        child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 30.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 15.0, right: 15, left: 15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Good ' + greeting() + ",",
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
-                      ),
-                      Text(
-                        "what would you like \nto cook today?",
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 15.0, top: 15),
-                  child: CircleAvatar(
-                    backgroundImage:
-                        NetworkImage(generateGravatarImageUrl(emailll!, 80)),
-                    radius: 25,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 50.0, left: 15, right: 15),
-            child: isLoading ? CircularProgressIndicator() : TextField(
-              controller: searchController,
-              onSubmitted: (value) async {
-                setState(() {
-                  isLoading = true;
-                });
-                final List data =
-                    await supabase.rpc('match_documents', params: {
-                  'query_embedding':
-                      await fetchOpenAIEmbeddings(searchController.text),
-                  'match_threshold': 0.5,
-                  'match_count': 2
-                });
-                print(data);
-                List objectsList_temp = [];
-                await supabase
-                    .from("recipesJsons")
-                    .select<PostgrestList>("JSON")
-                    .textSearch("created_by", searchController.text,
-                        type: TextSearchType.websearch)
-                    .then((value) {
-                  for (var element in data) {
-                    // print(element["JSON"]);
-
-                    Map<String, dynamic> decJson =
-                        jsonDecode(element["content"]);
-                    // print(decJson);
-
-                    objectsList_temp.add(decJson);
-                  }
-                  setState(() {
-                    isLoading = false;
-                  });
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchResultsPage(
-                            resultObjectslist: objectsList_temp,
-                            searchText: searchController.text)),
-                  );
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "search any recipes",
-                hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
-                prefixIcon: const Icon(Icons.search),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                filled: true,
-                fillColor: Colors.white,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      width: 3, color: Colors.transparent), //<-- SEE HERE
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      width: 3, color: Colors.transparent), //<-- SEE HERE
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: const Text(
-                    "categories",
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: SizedBox(
-                    height: 75,
-                    child: ListView.builder(
-                      shrinkWrap: false,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: names.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            width: 75,
-                            height: 75,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  icons[index],
-                                  style: TextStyle(fontSize: 28),
-                                ),
-                                Text(
-                                  names[index],
-                                  style: TextStyle(color: Colors.black54),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
-                    child: const Text(
-                      "Recommended",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: SizedBox(
-                      height: 175,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: objectsList.length,
-                        /*
-                          var recipe_name = widget.values["recipe_name"];
-                          var image_url = widget.values["image_url"];
-                          var created_by = widget.values["created_by"];
-                          var ingerdiants = widget.values["ingredients"];
-                          var avatar_url = widget.values["avatar_url"];
-                        */
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => RecipePage(
-                                              object: objectsList[index],
-                                            )),
-                                  );
-                                },
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: recipePreview(
-                                      createdBy: objectsList[index]
-                                          ['created_by'],
-                                      imageUrl: objectsList[index]['image_url'],
-                                      title: objectsList[index]['recipe_name']),
-                                )),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ))
-            ],
-          ),
-        ]),
-      ),
-    ));
-  }
-}
