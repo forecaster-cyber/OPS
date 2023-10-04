@@ -44,6 +44,7 @@ class _RecipePageState extends State<RecipePage> {
                 widget.object["image_url"],
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
               ),
             ),
           ),

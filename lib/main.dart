@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:zushi_and_karrot/auth.dart';
 import 'package:zushi_and_karrot/profile.dart';
 import 'package:zushi_and_karrot/recipe_page.dart';
+import 'package:zushi_and_karrot/recipe_preview_componenet.dart';
 import 'package:zushi_and_karrot/search_results_pafe.dart';
 import 'dart:convert';
 import 'upload.dart';
@@ -13,6 +14,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'signinsignup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+bool isLoading = false;
 List names = [
   'breakfast',
   'dinner',
@@ -333,9 +335,12 @@ class _RecipesPageState extends State<RecipesPage> {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 50.0, left: 15, right: 15),
-            child: TextField(
+            child: isLoading ? CircularProgressIndicator() : TextField(
               controller: searchController,
               onSubmitted: (value) async {
+                setState(() {
+                  isLoading = true;
+                });
                 final List data =
                     await supabase.rpc('match_documents', params: {
                   'query_embedding':
@@ -345,26 +350,32 @@ class _RecipesPageState extends State<RecipesPage> {
                 });
                 print(data);
                 List objectsList_temp = [];
-                final List listOfsearchedJsons = await supabase
+                await supabase
                     .from("recipesJsons")
                     .select<PostgrestList>("JSON")
                     .textSearch("created_by", searchController.text,
-                        type: TextSearchType.websearch);
-                for (var element in data) {
-                  // print(element["JSON"]);
+                        type: TextSearchType.websearch)
+                    .then((value) {
+                  for (var element in data) {
+                    // print(element["JSON"]);
 
-                  Map<String, dynamic> decJson = jsonDecode(element["content"]);
-                  // print(decJson);
+                    Map<String, dynamic> decJson =
+                        jsonDecode(element["content"]);
+                    // print(decJson);
 
-                  objectsList_temp.add(decJson);
-                }
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SearchResultsPage(
-                          resultObjectslist: objectsList_temp,
-                          searchText: searchController.text)),
-                );
+                    objectsList_temp.add(decJson);
+                  }
+                  setState(() {
+                    isLoading = false;
+                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchResultsPage(
+                            resultObjectslist: objectsList_temp,
+                            searchText: searchController.text)),
+                  );
+                });
               },
               decoration: InputDecoration(
                 hintText: "search any recipes",
@@ -457,7 +468,7 @@ class _RecipesPageState extends State<RecipesPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: SizedBox(
-                      height: 300,
+                      height: 175,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: objectsList.length,
@@ -470,56 +481,25 @@ class _RecipesPageState extends State<RecipesPage> {
                         */
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: const EdgeInsets.only(left: 15),
+                            padding: const EdgeInsets.all(5),
                             child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RecipePage(
-                                            object: objectsList[index],
-                                          )),
-                                );
-                              },
-                              child: SizedBox(
-                                width: 150,
-                                height: 300,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ClipRRect(
-                                        borderRadius: BorderRadius.circular(15),
-                                        child: Image.network(
-                                          objectsList[index]["image_url"],
-                                          width: 150,
-                                          height: 150,
-                                          fit: BoxFit.cover,
-                                        )),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            objectsList[index]["recipe_name"],
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                          Text(
-                                            objectsList[index]["created_by"],
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black54),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => RecipePage(
+                                              object: objectsList[index],
+                                            )),
+                                  );
+                                },
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: recipePreview(
+                                      createdBy: objectsList[index]
+                                          ['created_by'],
+                                      imageUrl: objectsList[index]['image_url'],
+                                      title: objectsList[index]['recipe_name']),
+                                )),
                           );
                         },
                       ),

@@ -1,4 +1,5 @@
 import 'package:zushi_and_karrot/recipe_page.dart';
+import 'package:zushi_and_karrot/recipe_preview_componenet.dart';
 
 import 'main.dart';
 import 'package:flutter/material.dart';
@@ -44,30 +45,24 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                       crossAxisCount: 2),
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.only(left: 15),
+                      padding: index % 2 == 0 ? const EdgeInsets.only(right: 5, bottom: 5) : const EdgeInsets.only(left: 5, bottom: 5),
                       child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RecipePage(
-                                      object: widget.resultObjectslist[index],
-                                    )),
-                          );
-                        },
-                        child: SizedBox(
-                          width: 150,
-                          height: 150,
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: Image.network(
-                                objectsList[index]["image_url"],
-                                width: 150,
-                                height: 150,
-                                fit: BoxFit.cover,
-                              )),
-                        ),
-                      ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RecipePage(
+                                        object: widget.resultObjectslist[index],
+                                      )),
+                            );
+                          },
+                          child: recipePreview(
+                              createdBy: widget.resultObjectslist[index]
+                                  ['created_by'],
+                              imageUrl: widget.resultObjectslist[index]
+                                  ['image_url'],
+                              title: widget.resultObjectslist[index]
+                                  ['recipe_name'])),
                     );
                   },
                 ),
