@@ -31,13 +31,6 @@ class LoginPage extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                 const  Padding(
-                    padding:  EdgeInsets.only(top: 15.0, bottom: 15),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(fontSize: 32, color: Colors.black),
-                    ),
-                  ),
                   TextField(
                     controller: emailController,
                     decoration: InputDecoration(
