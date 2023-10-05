@@ -8,7 +8,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'Pages/signinsignup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/home_page.dart';
+
 bool isLoading = false;
+List likedObjects = [];
 List names = [
   'breakfast',
   'dinner',
@@ -73,6 +75,7 @@ int _currentIndex = 0;
 bool wantToUpload = false;
 Map<String, dynamic> valuess = jsonDecode(aJson);
 TextEditingController searchController = TextEditingController();
+late List liked_ids;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
@@ -88,7 +91,7 @@ Future<void> main() async {
   final List listOfJsons =
       await supabase.from("recipesJsons").select<PostgrestList>("JSON");
   for (var element in listOfJsons) {
-    Map<String, dynamic> decJson = jsonDecode(element["JSON"]); 
+    Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
     objectsList.add(decJson);
   }
   final List listOfMyPostsJsons = await supabase
@@ -120,17 +123,18 @@ class _MainAppState extends State<MainApp> {
       theme: ThemeData(
         // fontFamily: 'Varela',
         colorScheme: ColorScheme.fromSwatch().copyWith(
-            primary: const Color(0xFF415d59),
+            primary: const Color(0xFF222222),
+            //222222
             secondary: const Color(0xFFe7eeed),
             background: const Color(0xFFf6f9f8),
             brightness: Brightness.dark),
         inputDecorationTheme: const InputDecorationTheme(
           enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFF415d59)),
+            borderSide: BorderSide(color: Color(0xFF222222)),
           ),
         ),
         useMaterial3: true,
-        primaryColor: const Color(0xFF415d59),
+        primaryColor: const Color(0xFF222222),
       ),
       home: LoginPage(authManager),
       routes: {
@@ -171,7 +175,7 @@ class _MainScreenState extends State<MainScreen> {
         bottomNavigationBar: NavigationBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          indicatorColor: const Color(0xFF415d59),
+          indicatorColor: const Color(0xFF222222),
           selectedIndex: _currentIndex,
           onDestinationSelected: (value) {
             setState(() {
@@ -204,4 +208,3 @@ class _MainScreenState extends State<MainScreen> {
         body: widgets[_currentIndex]);
   }
 }
-

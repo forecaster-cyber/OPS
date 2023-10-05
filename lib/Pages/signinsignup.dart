@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../main.dart';
@@ -6,14 +7,11 @@ import '../auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
-  
-
   final AuthManager authManager;
-  LoginPage(this.authManager, {super.key});
+  const LoginPage(this.authManager, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey.shade100,
@@ -56,27 +54,34 @@ class LoginPage extends StatelessWidget {
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            foregroundColor: Colors.white,
-                            elevation: 0
-                          ),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              foregroundColor: Colors.white,
+                              elevation: 0),
                           onPressed: () async {
                             final email = emailController.text;
                             final password = passwordController.text;
                             authManager.signIn(email, password).then((_) {
+                              getLikedIds().then(
+                                (value) {
+                                  getRowsForIds(value);
+                                },
+                              );
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const MainScreen()));
+                                      builder: (context) =>
+                                          const MainScreen()));
                             }).catchError((error) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Sign in failed: $error')),
+                                SnackBar(
+                                    content: Text('Sign in failed: $error')),
                               );
                             });
                             final SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
                             await prefs.setString('email', email);
                             await prefs.setString('password', password);
+                            emailll = email;
                           },
                           child: const Text('Sign In'),
                         ),
@@ -96,13 +101,24 @@ class LoginPage extends StatelessWidget {
                           onPressed: () async {
                             final email = emailController.text;
                             final password = passwordController.text;
-                            authManager.signUp(email, password).then((_) {
+                            authManager.signUp(email, password).then((_) async {
                               ScaffoldMessenger.of(context).showSnackBar(
-                              const   SnackBar(content: Text('Sign up successful')),
+                                const SnackBar(
+                                    content: Text('Sign up successful')),
                               );
+                              await supabase.from("users").insert([
+                                {"user": email, "liked_posts": []}
+                              ]);
+                              // ignore: use_build_context_synchronously
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const MainScreen()));
                             }).catchError((error) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Sign up failed: $error')),
+                                SnackBar(
+                                    content: Text('Sign up failed: $error')),
                               );
                             });
                             final SharedPreferences prefs =
@@ -110,7 +126,7 @@ class LoginPage extends StatelessWidget {
                             await prefs.setString('email', email);
                             await prefs.setString('password', password);
                           },
-                          child:const  Text('Sign Up'),
+                          child: const Text('Sign Up'),
                         ),
                       ),
                     ],
@@ -123,4 +139,58 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+}
+
+
+
+Future<List> getLikedIds() async {
+  liked_ids = await supabase
+      .from('users')
+      .select("liked_posts")
+      .match(({"user": emailll}));
+
+  liked_ids = liked_ids[0]["liked_posts"];
+  return liked_ids;
+}
+
+Future<List> getRowsForIds(List ids) async {
+  // Initialize Supabase client
+  likedObjects = [];
+  // Create a SELECT query with a WHERE clause to filter by IDs
+  final response = await supabase
+      .from('recipesJsons') // Replace with your table name
+      .select("JSON")
+      .in_('id', ids);
+
+  for (var element in response) {
+    Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+    likedObjects.add(decJson);
+  }
+  return likedObjects;
+}
+
+void removeIdFromLikes(dynamic object) async {
+  await supabase
+      .from("recipesJsons")
+      .select("id")
+      .match({"JSON": jsonEncode(object)}).then((value) async {
+    liked_ids.remove(value[0]["id"]);
+    await supabase
+        .from("users")
+        .update({"liked_posts": liked_ids}).eq("user", emailll);
+
+    likedObjects.remove(object);
+  });
+}
+
+void addIdToLikes(dynamic object) async {
+  dynamic id = await supabase
+      .from("recipesJsons")
+      .select("id")
+      .eq("JSON", jsonEncode(object));
+  liked_ids.add(id[0]["id"]);
+  await supabase
+      .from("users")
+      .update({"liked_posts": liked_ids}).eq("user", emailll);
+  likedObjects.add(object);
 }

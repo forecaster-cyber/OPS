@@ -1,17 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:zushi_and_karrot/Pages/signinsignup.dart';
+import 'package:zushi_and_karrot/main.dart';
 
 class RecipePage extends StatefulWidget {
   // final int index;
   // final bool currentUserCreated;
   final dynamic object;
-  const RecipePage(
-      {super.key, required this.object});
+  const RecipePage({super.key, required this.object});
 
   @override
   State<RecipePage> createState() => _RecipePageState();
 }
 
 class _RecipePageState extends State<RecipePage> {
+  late bool isLiked;
+
+  Icon iconIcon = const Icon(Icons.favorite_border);
+  @override
+  void initState() {
+    if (likedObjects.contains(widget.object)) {
+      setState(() {
+        iconIcon = const Icon(
+          Icons.favorite,
+          color: Colors.red,
+        );
+      });
+    } else {
+      setState(() {
+        iconIcon = const Icon(
+          Icons.favorite_border,
+          color: Colors.black54,
+        );
+      });
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,11 +108,38 @@ class _RecipePageState extends State<RecipePage> {
                                           fontSize: 24, color: Colors.black),
                                     ),
                                   ),
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      widget.object['avatar_url'],
-                                    ),
-                                    radius: 20,
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            if (likedObjects
+                                                .contains(widget.object)) {
+                                              removeIdFromLikes(widget.object);
+
+                                              setState(() {
+                                                iconIcon = const Icon(
+                                                  Icons.favorite_border,
+                                                  color: Colors.black54,
+                                                );
+                                              });
+                                            } else {
+                                              addIdToLikes(widget.object);
+                                              setState(() {
+                                                iconIcon = const Icon(
+                                                  Icons.favorite,
+                                                  color: Colors.red,
+                                                );
+                                              });
+                                            }
+                                          },
+                                          icon: iconIcon),
+                                      CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                          widget.object['avatar_url'],
+                                        ),
+                                        radius: 20,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -98,9 +149,7 @@ class _RecipePageState extends State<RecipePage> {
                                     fontSize: 14, color: Colors.black54),
                               ),
                               Text(
-                                (widget.object['duration'] ??
-                                            "? ") +
-                                        " min",
+                                (widget.object['duration'] ?? "? ") + " min",
                                 style: const TextStyle(
                                     fontSize: 14, color: Colors.black54),
                               ),
@@ -117,8 +166,7 @@ class _RecipePageState extends State<RecipePage> {
                                 style: TextStyle(
                                     fontSize: 22, color: Colors.black),
                               ),
-                              Text(
-                                  widget.object['ingredients'],
+                              Text(widget.object['ingredients'],
                                   style: const TextStyle(
                                       fontSize: 14, color: Colors.black54))
                             ],
@@ -137,11 +185,10 @@ class _RecipePageState extends State<RecipePage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: List<Widget>.generate(
-                                  widget.object['steps']
-                                          .length,
+                                  widget.object['steps'].length,
                                   (index) {
-                                    final stepText = widget.object['steps']
-                                            [index];
+                                    final stepText =
+                                        widget.object['steps'][index];
                                     return Padding(
                                       padding:
                                           const EdgeInsets.only(bottom: 8.0),

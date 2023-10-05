@@ -55,17 +55,22 @@ class _NewRecipeState extends State<NewRecipe> {
     return Scaffold(
       // backgroundColor: Color(0xFFf1faee),
       appBar: AppBar(
-        title: Text('Share a Recipe'),
+        title: const Text('Share a Recipe'),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back, size: 32, color: Colors.white,)),
       ),
       body: lodaing
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: ListView(
                 children: [
                   GestureDetector(
@@ -80,13 +85,13 @@ class _NewRecipeState extends State<NewRecipe> {
                         borderRadius: BorderRadius.circular(15),
                         color: imageFile != null
                             ? Colors.transparent
-                            : Color(0xFF415d59),
+                            : const Color(0xFF222222),
                       ),
                       child: imageFile != null
                           ? kIsWeb
                               ? Image.network(imageFile!.path)
                               : Image.file(imageFile!)
-                          : Center(
+                          : const Center(
                               child: Icon(
                                 Icons.add_a_photo,
                                 size: 48,
@@ -102,10 +107,11 @@ class _NewRecipeState extends State<NewRecipe> {
                         flex: 3,
                         child: TextField(
                           controller: titleController,
-                          decoration: InputDecoration(labelText: 'Title:'),
+                          decoration:
+                              const InputDecoration(labelText: 'Title:'),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Expanded(
@@ -113,18 +119,20 @@ class _NewRecipeState extends State<NewRecipe> {
                         child: TextField(
                           controller: durationController,
                           keyboardType: TextInputType.number,
-                          decoration: InputDecoration(labelText: 'mintues'),
+                          decoration:
+                              const InputDecoration(labelText: 'mintues'),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 34),
+                  const SizedBox(height: 34),
                   TextField(
                     controller: ingriedientsController,
-                    decoration: InputDecoration(labelText: 'Ingredients:'),
+                    decoration:
+                        const InputDecoration(labelText: 'Ingredients:'),
                   ),
-                  SizedBox(height: 34),
-                  Text('Steps:'),
+                  const SizedBox(height: 34),
+                  const Text('Steps:'),
                   for (int i = 0; i < textFields.length; i++) ...[
                     Row(
                       children: [
@@ -138,9 +146,9 @@ class _NewRecipeState extends State<NewRecipe> {
                         ),
                         if (i == textFields.length - 1)
                           IconButton(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.add,
-                              color: Color(0xFF415d59),
+                              color: Color(0xFF222222),
                             ),
                             onPressed: () {
                               setState(() {
@@ -154,7 +162,7 @@ class _NewRecipeState extends State<NewRecipe> {
                           ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                   ],
                   Row(
                     children: [
@@ -171,7 +179,7 @@ class _NewRecipeState extends State<NewRecipe> {
                               lodaing = true;
                             });
                           },
-                          child: Text('Submit'),
+                          child: const Text('Submit'),
                         ),
                       ),
                     ],
@@ -184,6 +192,7 @@ class _NewRecipeState extends State<NewRecipe> {
 
   // Get image from gallery
   _getFromGallery() async {
+    // ignore: deprecated_member_use
     PickedFile? pickedFile = await ImagePicker().getImage(
       source: ImageSource.gallery,
       maxWidth: 500,
@@ -198,7 +207,6 @@ class _NewRecipeState extends State<NewRecipe> {
 
   void getStepsOnSubmit() async {
     for (int i = 0; i < textFields.length; i++) {
-      print(textFields[i].controller.text);
       steps.add(textFields[i].controller.text);
     }
 
@@ -222,9 +230,9 @@ class _NewRecipeState extends State<NewRecipe> {
           );
     }
     Future<List<double>> fetchOpenAIEmbeddings(String inputParam) async {
-      final String apiKey =
+      const String apiKey =
           "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";
-      final String apiUrl = "https://api.openai.com/v1/embeddings";
+      const String apiUrl = "https://api.openai.com/v1/embeddings";
 
       final Map<String, dynamic> requestBody = {
         "input": inputParam,
@@ -263,12 +271,10 @@ class _NewRecipeState extends State<NewRecipe> {
     //print("First path: $path");
     final String publicUrl = supabase.storage
         .from('Photos')
-        .getPublicUrl("${listOfPhotos.length.toString()}");
-    print("Second path: $publicUrl");
-    final List<FileObject> new_listOfFiles =
+        .getPublicUrl(listOfPhotos.length.toString());
+    final List<FileObject> newListoffiles =
         await supabase.storage.from("Photos").list();
-    final int listLength = new_listOfFiles.length - 1;
-    final avatarrrr = generateGravatarImageUrl(emailll!, 80);
+    final int listLength = newListoffiles.length - 1;
     var newObj = {
       'image_url': publicUrl,
       'recipe_name': titleController.text,
@@ -278,10 +284,6 @@ class _NewRecipeState extends State<NewRecipe> {
       'avatar_url': generateGravatarImageUrl(emailll!, 80),
       'duration': durationController.text
     };
-    print(generateGravatarImageUrl(emailll!, 80));
-    print(avatarararara);
-    print(emailll!);
-    print(avatarrrr);
     var newJson = jsonEncode(newObj);
 
     await supabase.from("recipesJsons").insert([
