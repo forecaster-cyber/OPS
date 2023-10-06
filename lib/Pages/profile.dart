@@ -99,7 +99,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                       object: copyObject,
                                     ),
                                   ),
-                                );
+                                ).then((value) {
+                                  setState(() {
+                                    
+                                  });
+                                });
                               },
                               child: recipePreview(
                                 createdBy: likedObjects[index]['created_by'],

@@ -197,7 +197,11 @@ class _MainScreenState extends State<MainScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/newRecipe');
+            Navigator.pushNamed(context, '/newRecipe').then((value) {
+              setState(() {
+                
+              });
+            });
           },
           backgroundColor: Theme.of(context).primaryColor,
           child: const Icon(

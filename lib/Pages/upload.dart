@@ -63,7 +63,11 @@ class _NewRecipeState extends State<NewRecipe> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(Icons.arrow_back, size: 32, color: Colors.white,)),
+            icon: Icon(
+              Icons.arrow_back,
+              size: 32,
+              color: Colors.white,
+            )),
       ),
       body: lodaing
           ? const Center(
@@ -174,10 +178,17 @@ class _NewRecipeState extends State<NewRecipe> {
                             foregroundColor: Colors.white,
                           ),
                           onPressed: () {
-                            getStepsOnSubmit();
-                            setState(() {
-                              lodaing = true;
-                            });
+                            if (imageFile != null) {
+                              getStepsOnSubmit();
+                              setState(() {
+                                lodaing = true;
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                               const SnackBar(
+                                    content: Text('please upload an image of your recipe')),
+                              );
+                            }
                           },
                           child: const Text('Submit'),
                         ),
