@@ -1,5 +1,7 @@
 import 'dart:core';
 //import 'dart:js_interop';
+import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'recipe_page.dart';
@@ -93,11 +95,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 15.0, top: 15),
-                  child: CircleAvatar(
-                    backgroundImage:
-                        NetworkImage(generateGravatarImageUrl(emailll!, 80)),
-                    radius: 25,
-                  ),
+                  child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: BoringAvatars(
+                      name: extractUsername(emailll!), type: BoringAvatarsType.beam)),
                 ),
               ],
             ),

@@ -21,9 +21,10 @@ class NewRecipe extends StatefulWidget {
   _NewRecipeState createState() => _NewRecipeState();
 }
 
-String generateGravatarImageUrl(String email, int size) {
-  final hash = md5.convert(utf8.encode(email.trim().toLowerCase()));
-  final url = 'https://www.gravatar.com/avatar/$hash?s=$size';
+String generateGravatarImageUrl(String username, int size) {
+  
+  final url = 'https://source.boringavatars.com/marble/$size/$username';
+
   return url;
 }
 
@@ -185,8 +186,9 @@ class _NewRecipeState extends State<NewRecipe> {
                               });
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                               const SnackBar(
-                                    content: Text('please upload an image of your recipe')),
+                                const SnackBar(
+                                    content: Text(
+                                        'please upload an image of your recipe')),
                               );
                             }
                           },

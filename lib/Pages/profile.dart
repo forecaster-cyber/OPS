@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zushi_and_karrot/main.dart';
 import 'package:zushi_and_karrot/components/recipe_preview_componenet.dart';
 import 'recipe_page.dart';
@@ -23,11 +25,25 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(
                 height: 20,
               ),
-              CircleAvatar(
-                backgroundImage:
-                    NetworkImage(generateGravatarImageUrl(emailll!, 320)),
-                radius: 80,
-              ),
+              // CircleAvatar(
+              //   backgroundColor: Colors.white,
+              //   radius: 80,
+              //   child: ClipRRect(
+              //     borderRadius: BorderRadius.circular(999999),
+              //     child: SvgPicture.network(
+              //       generateGravatarImageUrl( extractUsername(emailll!) , 320),
+              //       width: 160,
+
+              //     ),
+              //   ),
+              // ),
+
+              SizedBox(
+                  width: 160,
+                  height: 160,
+                  child: BoringAvatars(
+                      name: extractUsername(emailll!), type: BoringAvatarsType.beam)),
+
               Text(
                 extractUsername(emailll!),
                 style:
@@ -53,8 +69,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: index % 2 == 0
-                                ? const EdgeInsets.only(right: 5, bottom: 5)
-                                : const EdgeInsets.only(left: 5, bottom: 5),
+                                ? const EdgeInsets.only(right: 5, bottom: 10)
+                                : const EdgeInsets.only(left: 5, bottom: 10),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -88,8 +104,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           dynamic copyObject = (likedObjects[index]);
                           return Padding(
                             padding: index % 2 == 0
-                                ? const EdgeInsets.only(right: 5, bottom: 5)
-                                : const EdgeInsets.only(left: 5, bottom: 5),
+                                ? const EdgeInsets.only(right: 5, bottom: 10)
+                                : const EdgeInsets.only(left: 5, bottom: 10),
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -100,9 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                 ).then((value) {
-                                  setState(() {
-                                    
-                                  });
+                                  setState(() {});
                                 });
                               },
                               child: recipePreview(

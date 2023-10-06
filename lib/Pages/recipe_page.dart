@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boring_avatars/flutter_boring_avatars.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:zushi_and_karrot/Pages/signinsignup.dart';
+import 'package:zushi_and_karrot/Pages/upload.dart';
 import 'package:zushi_and_karrot/main.dart';
 
 class RecipePage extends StatefulWidget {
@@ -135,12 +138,19 @@ class _RecipePageState extends State<RecipePage> {
                                             }
                                           },
                                           icon: iconIcon),
-                                      CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                          widget.object['avatar_url'],
-                                        ),
-                                        radius: 20,
-                                      ),
+                                      // CircleAvatar(
+                                      //   backgroundImage: NetworkImage(
+                                      //     widget.object['avatar_url'],
+                                      //   ),
+                                      //   radius: 20,
+                                      // ),
+
+                                      SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: BoringAvatars(
+                                              name: widget.object['created_by'],
+                                              type: BoringAvatarsType.beam)),
                                     ],
                                   ),
                                 ],

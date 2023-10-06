@@ -19,6 +19,7 @@ class LoginPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(25.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
                 width: MediaQuery.of(context).size.width / 1.2,
@@ -53,7 +54,9 @@ class LoginPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
+                          
                           style: ElevatedButton.styleFrom(
+                          
                               backgroundColor: Theme.of(context).primaryColor,
                               foregroundColor: Colors.white,
                               elevation: 0),
@@ -97,7 +100,7 @@ class LoginPage extends StatelessWidget {
                               backgroundColor: Colors.transparent,
                               side: BorderSide(
                                   color: Theme.of(context).primaryColor),
-                              foregroundColor: Colors.black54),
+                              foregroundColor: Colors.black),
                           onPressed: () async {
                             final email = emailController.text;
                             final password = passwordController.text;
