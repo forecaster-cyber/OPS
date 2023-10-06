@@ -1,20 +1,22 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
-class recipePreview extends StatefulWidget {
+class RecipePreview extends StatefulWidget {
   final String imageUrl;
   final String title;
   final String createdBy;
-  const recipePreview(
+  const RecipePreview(
       {super.key,
       required this.createdBy,
       required this.imageUrl,
       required this.title});
 
   @override
-  State<recipePreview> createState() => _recipePreviewState();
+  State<RecipePreview> createState() => _RecipePreviewState();
 }
 
-class _recipePreviewState extends State<recipePreview> {
+class _RecipePreviewState extends State<RecipePreview> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -25,50 +27,64 @@ class _recipePreviewState extends State<recipePreview> {
         children: [
           Positioned.fill(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(15),
               child: Image.network(
                 widget.imageUrl,
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          Positioned.fill(
-            top: 50,
-            child: Container(
-              width: 150,
-              height: 75,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.black.withOpacity(0.6),
-                    Colors.transparent,
-                  ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  tileMode: TileMode.clamp,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0, bottom: 8),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: const EdgeInsets.only(left: 0, bottom: 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Text(
-                      widget.title,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white),
-                    ),
-                    Text(
-                      widget.createdBy,
-                      style: TextStyle(fontSize: 14, color: Colors.white),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.only(top: 20),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.black.withOpacity(1),
+                                Colors.black.withOpacity(0),
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              tileMode: TileMode.clamp,
+                            ),
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(15),
+                                bottomRight: Radius.circular(15))),
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(left: 8, bottom: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                widget.title,
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              Text(
+                                widget.createdBy,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ],
-                ),
-              ),
+                )
+              ],
             ),
           ),
         ],

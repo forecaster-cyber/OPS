@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(0),
         child: Column(children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 30.0),
+            padding: const EdgeInsets.only(bottom: 50.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,7 +170,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 30.0),
+            padding: const EdgeInsets.only(bottom: 50.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -265,7 +265,7 @@ class _HomePageState extends State<HomePage> {
                                 },
                                 child: AspectRatio(
                                   aspectRatio: 1,
-                                  child: recipePreview(
+                                  child: RecipePreview(
                                       createdBy: objectsList[index]
                                           ['created_by'],
                                       imageUrl: objectsList[index]['image_url'],

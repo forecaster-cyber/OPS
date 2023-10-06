@@ -82,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 );
                               },
-                              child: recipePreview(
+                              child: RecipePreview(
                                 createdBy: myPostsList[index]['created_by'],
                                 imageUrl: myPostsList[index]['image_url'],
                                 title: myPostsList[index]['recipe_name'],
@@ -119,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   setState(() {});
                                 });
                               },
-                              child: recipePreview(
+                              child: RecipePreview(
                                 createdBy: likedObjects[index]['created_by'],
                                 imageUrl: likedObjects[index]['image_url'],
                                 title: likedObjects[index]['recipe_name'],

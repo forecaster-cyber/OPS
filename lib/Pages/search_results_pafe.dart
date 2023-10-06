@@ -56,7 +56,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                                       )),
                             );
                           },
-                          child: recipePreview(
+                          child: RecipePreview(
                               createdBy: widget.resultObjectslist[index]
                                   ['created_by'],
                               imageUrl: widget.resultObjectslist[index]
