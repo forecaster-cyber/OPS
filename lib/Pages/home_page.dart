@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(0),
         child: Column(children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 50.0),
+            padding: const EdgeInsets.only(bottom: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 50.0, left: 15, right: 15),
+            padding: const EdgeInsets.only(bottom: 30.0, left: 15, right: 15),
             child: isLoading ? CircularProgressIndicator() : TextField(
               controller: searchController,
               onSubmitted: (value) async {
@@ -170,7 +170,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 50.0),
+            padding: const EdgeInsets.only(bottom: 30.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

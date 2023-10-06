@@ -17,7 +17,7 @@ class LoginPage extends StatelessWidget {
       backgroundColor: Colors.grey.shade100,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(25.0),
+          padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -27,6 +27,7 @@ class LoginPage extends StatelessWidget {
                 color: Colors.transparent,
                 child: SvgPicture.asset("assets/328.svg"),
               ),
+              
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -40,6 +41,7 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 8.0),
                   TextField(
                     controller: passwordController,
                     decoration: InputDecoration(
@@ -53,40 +55,42 @@ class LoginPage extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
-                          
-                          style: ElevatedButton.styleFrom(
-                          
-                              backgroundColor: Theme.of(context).primaryColor,
-                              foregroundColor: Colors.white,
-                              elevation: 0),
-                          onPressed: () async {
-                            final email = emailController.text;
-                            final password = passwordController.text;
-                            authManager.signIn(email, password).then((_) {
-                              getLikedIds().then(
-                                (value) {
-                                  getRowsForIds(value);
-                                },
-                              );
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const MainScreen()));
-                            }).catchError((error) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text('Sign in failed: $error')),
-                              );
-                            });
-                            final SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await prefs.setString('email', email);
-                            await prefs.setString('password', password);
-                            emailll = email;
-                          },
-                          child: const Text('Sign In'),
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                                backgroundColor: Theme.of(context).primaryColor,
+                                foregroundColor: Colors.white,
+                                elevation: 0),
+                            onPressed: () async {
+                              final email = emailController.text;
+                              final password = passwordController.text;
+                              authManager.signIn(email, password).then((_) {
+                                getLikedIds().then(
+                                  (value) {
+                                    getRowsForIds(value);
+                                  },
+                                );
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MainScreen()));
+                              }).catchError((error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Sign in failed: $error')),
+                                );
+                              });
+                              final SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString('email', email);
+                              await prefs.setString('password', password);
+                              emailll = email;
+                            },
+                            child: const Text('Sign In'),
+                          ),
                         ),
                       ),
                     ],
@@ -94,42 +98,46 @@ class LoginPage extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              side: BorderSide(
-                                  color: Theme.of(context).primaryColor),
-                              foregroundColor: Colors.black),
-                          onPressed: () async {
-                            final email = emailController.text;
-                            final password = passwordController.text;
-                            authManager.signUp(email, password).then((_) async {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Sign up successful')),
-                              );
-                              await supabase.from("users").insert([
-                                {"user": email, "liked_posts": []}
-                              ]);
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const MainScreen()));
-                            }).catchError((error) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text('Sign up failed: $error')),
-                              );
-                            });
-                            final SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await prefs.setString('email', email);
-                            await prefs.setString('password', password);
-                          },
-                          child: const Text('Sign Up'),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
+                                side: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                                foregroundColor: Colors.black),
+                            onPressed: () async {
+                              final email = emailController.text;
+                              final password = passwordController.text;
+                              authManager.signUp(email, password).then((_) async {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Sign up successful')),
+                                );
+                                await supabase.from("users").insert([
+                                  {"user": email, "liked_posts": []}
+                                ]);
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MainScreen()));
+                              }).catchError((error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Sign up failed: $error')),
+                                );
+                              });
+                              final SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString('email', email);
+                              await prefs.setString('password', password);
+                            },
+                            child: const Text('Sign Up'),
+                          ),
                         ),
                       ),
                     ],
