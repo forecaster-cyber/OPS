@@ -141,8 +141,6 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-
-
 Future<List> getLikedIds() async {
   liked_ids = await supabase
       .from('users')
@@ -151,6 +149,15 @@ Future<List> getLikedIds() async {
 
   liked_ids = liked_ids[0]["liked_posts"];
   return liked_ids;
+}
+
+Future<int> getLikeCount(dynamic object) async {
+  dynamic likes = await supabase
+      .from('recipesJsons')
+      .select("like_count")
+      .eq("JSON", jsonEncode(object));
+  print(likes[0]['like_count']);
+  return likes[0]['like_count'];
 }
 
 Future<List> getRowsForIds(List ids) async {

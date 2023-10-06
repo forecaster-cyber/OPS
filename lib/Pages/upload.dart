@@ -63,7 +63,7 @@ class _NewRecipeState extends State<NewRecipe> {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               size: 32,
               color: Colors.white,

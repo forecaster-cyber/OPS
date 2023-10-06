@@ -33,6 +33,8 @@ class _RecipePageState extends State<RecipePage> {
         );
       });
     }
+
+    getLikeCount(widget.object);
     super.initState();
   }
 
