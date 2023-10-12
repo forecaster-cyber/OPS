@@ -1,14 +1,34 @@
 import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:zushi_and_karrot/utils/app_lifecycle_reactor.dart';
+import 'package:zushi_and_karrot/utils/app_open_ad_manager.dart';
 
 import '../main.dart';
 import 'package:flutter/material.dart';
-import '../auth.dart';
+import '../utils/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   final AuthManager authManager;
   const LoginPage(this.authManager, {super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  late AppLifecycleReactor _appLifecycleReactor;
+
+  @override
+  void initState() {
+    super.initState();
+    appOpenAdManager = AppOpenAdManager()..loadAd();
+    _appLifecycleReactor =
+        AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
+    _appLifecycleReactor.listenToAppStateChanges();
+
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +47,6 @@ class LoginPage extends StatelessWidget {
                 color: Colors.transparent,
                 child: SvgPicture.asset("assets/328.svg"),
               ),
-              
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -59,14 +78,16 @@ class LoginPage extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 8.0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 20),
+                                padding: EdgeInsets.symmetric(vertical: 20),
                                 backgroundColor: Theme.of(context).primaryColor,
                                 foregroundColor: Colors.white,
                                 elevation: 0),
                             onPressed: () async {
                               final email = emailController.text;
                               final password = passwordController.text;
-                              authManager.signIn(email, password).then((_) {
+                              widget.authManager
+                                  .signIn(email, password)
+                                  .then((_) {
                                 getLikedIds().then(
                                   (value) {
                                     getRowsForIds(value);
@@ -102,7 +123,7 @@ class LoginPage extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 0),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 20),
+                                padding: EdgeInsets.symmetric(vertical: 20),
                                 elevation: 0,
                                 backgroundColor: Colors.transparent,
                                 side: BorderSide(
@@ -111,7 +132,9 @@ class LoginPage extends StatelessWidget {
                             onPressed: () async {
                               final email = emailController.text;
                               final password = passwordController.text;
-                              authManager.signUp(email, password).then((_) async {
+                              widget.authManager
+                                  .signUp(email, password)
+                                  .then((_) async {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('Sign up successful')),

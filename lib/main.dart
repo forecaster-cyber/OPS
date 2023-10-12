@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:zushi_and_karrot/auth.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:zushi_and_karrot/utils/auth.dart';
 import 'pages/profile.dart';
 import 'dart:convert';
 import 'Pages/upload.dart';
@@ -8,7 +9,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'Pages/signinsignup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/home_page.dart';
+import 'utils/app_lifecycle_reactor.dart';
+import 'utils/app_open_ad_manager.dart';
 
+late AppOpenAdManager appOpenAdManager;
 bool isLoading = false;
 List likedObjects = [];
 List names = [
@@ -78,6 +82,7 @@ TextEditingController searchController = TextEditingController();
 late List liked_ids;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseKey,
@@ -152,6 +157,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  
   Future<void> refresh() async {
     final List listOfJsons =
         await supabase.from("recipesJsons").select<PostgrestList>("JSON");
@@ -166,12 +172,19 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+
+  @override
+  void initState() {
+    appOpenAdManager.showAdIfAvailable();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     List widgets = [HomePage(voidCallback: refresh), const ProfilePage()];
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.grey.shade100,
+        backgroundColor: const Color.fromRGBO(245, 245, 245, 1),
         bottomNavigationBar: NavigationBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -198,9 +211,7 @@ class _MainScreenState extends State<MainScreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.pushNamed(context, '/newRecipe').then((value) {
-              setState(() {
-                
-              });
+              setState(() {});
             });
           },
           backgroundColor: Theme.of(context).primaryColor,
