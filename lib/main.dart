@@ -131,10 +131,11 @@ void setup_app() async {
     String email = element["user"];
     list_of_users_final.add(email);
   }
+  list_of_users_final.remove(emailll);
+  print(list_of_users_final);
   chosenRandomUser =
       list_of_users_final[Random().nextInt(list_of_users_final.length)];
 
-   
   print(chosenRandomUser);
   while (chosen == false) {
     final List listOfrandomChosenUserPostsJsons = await supabase
@@ -222,7 +223,11 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List widgets = [HomePage(voidCallback: refresh), ExplorePage(), const ProfilePage()];
+    List widgets = [
+      HomePage(voidCallback: refresh),
+      ExplorePage(),
+      const ProfilePage()
+    ];
     return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: const Color.fromRGBO(245, 245, 245, 1),
