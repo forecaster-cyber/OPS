@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(fontSize: 14, color: Colors.black54),
                       ),
                       Text(
-                        "what would you like \nto cook today?",
+                        "What would you like \nto eat today?",
                         style: TextStyle(
                             fontSize: 28, fontWeight: FontWeight.w500),
                       ),
@@ -170,14 +170,14 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 30.0),
+            padding: const EdgeInsets.only(bottom: 15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0),
                   child: const Text(
-                    "categories",
+                    "Categories",
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
                   ),
                 ),
@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 15.0),
                     child: const Text(
-                      "Recommended",
+                      "Latest",
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
                     ),
@@ -270,6 +270,54 @@ class _HomePageState extends State<HomePage> {
                                           ['created_by'],
                                       imageUrl: objectsList[index]['image_url'],
                                       title: objectsList[index]['recipe_name']),
+                                )),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0, top: 15.0),
+                    child:  Text(
+                      "Recipes by " + extractUsername(chosenRandomUser) ,
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: SizedBox(
+                      height: 175,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: posts_by_random_chosen_user.length,
+                        /*
+                          var recipe_name = widget.values["recipe_name"];
+                          var image_url = widget.values["image_url"];
+                          var created_by = widget.values["created_by"];
+                          var ingerdiants = widget.values["ingredients"];
+                          var avatar_url = widget.values["avatar_url"];
+                        */
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => RecipePage(
+                                              object: posts_by_random_chosen_user[index],
+                                            )),
+                                  );
+                                },
+                                child: AspectRatio(
+                                  aspectRatio: 1,
+                                  child: RecipePreview(
+                                      createdBy: posts_by_random_chosen_user[index]
+                                          ['created_by'],
+                                      imageUrl: posts_by_random_chosen_user[index]['image_url'],
+                                      title: posts_by_random_chosen_user[index]['recipe_name']),
                                 )),
                           );
                         },

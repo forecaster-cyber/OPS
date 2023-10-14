@@ -11,10 +11,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'pages/home_page.dart';
 import 'utils/app_lifecycle_reactor.dart';
 import 'utils/app_open_ad_manager.dart';
+import 'dart:math';
 
 late AppOpenAdManager appOpenAdManager;
 bool isLoading = false;
+String chosenRandomUser = "";
+bool chosen = false;
 List likedObjects = [];
+List posts_by_random_chosen_user = [];
 List names = [
   'breakfast',
   'dinner',
@@ -25,6 +29,7 @@ List names = [
   'side dish',
   'healthy'
 ];
+
 String greeting() {
   var hour = DateTime.now().hour;
   if (hour < 12) {
@@ -70,6 +75,7 @@ var obj = {
 final TextEditingController emailController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
 List objectsList = [];
+List list_of_users_final = [];
 final supabase = Supabase.instance.client;
 final AuthManager authManager = AuthManager();
 var aJson = jsonEncode(obj);
@@ -108,6 +114,33 @@ Future<void> main() async {
     Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
     myPostsList.add(decJson);
   }
+
+  final List listOfUsers = await supabase.from("users").select("user");
+  for (var element in listOfUsers) {
+    String email = element["user"];
+    list_of_users_final.add(email);
+  }
+  chosenRandomUser =
+      list_of_users_final[Random().nextInt(list_of_users_final.length)];
+  print(chosenRandomUser);
+  while (chosen == false) {
+    final List listOfrandomChosenUserPostsJsons = await supabase
+        .from("recipesJsons")
+        .select<PostgrestList>("JSON")
+        .textSearch("created_by", extractUsername(chosenRandomUser));
+    for (var element in listOfrandomChosenUserPostsJsons) {
+      Map<String, dynamic> decJson = jsonDecode(element["JSON"]);
+      posts_by_random_chosen_user.add(decJson);
+    }
+    if (posts_by_random_chosen_user.length > 0) {
+      chosen = true;
+    } else {
+      chosenRandomUser =
+          list_of_users_final[Random().nextInt(list_of_users_final.length)];
+      chosen = false;
+    }
+  }
+
   emailController.text = emailll ?? "";
   passwordController.text = passowrdd ?? "";
   runApp(const MainApp());
@@ -157,7 +190,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  
   Future<void> refresh() async {
     final List listOfJsons =
         await supabase.from("recipesJsons").select<PostgrestList>("JSON");
@@ -171,7 +203,6 @@ class _MainScreenState extends State<MainScreen> {
       });
     }
   }
-
 
   @override
   void initState() {
