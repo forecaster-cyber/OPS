@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:zushi_and_karrot/Pages/explore.dart';
 import 'package:zushi_and_karrot/utils/auth.dart';
 import 'pages/profile.dart';
 import 'dart:convert';
@@ -132,6 +133,8 @@ void setup_app() async {
   }
   chosenRandomUser =
       list_of_users_final[Random().nextInt(list_of_users_final.length)];
+
+   
   print(chosenRandomUser);
   while (chosen == false) {
     final List listOfrandomChosenUserPostsJsons = await supabase
@@ -180,6 +183,7 @@ class _MainAppState extends State<MainApp> {
         useMaterial3: true,
         primaryColor: const Color(0xFF222222),
       ),
+      // home: LoginPage(authManager),
       home: LoginPage(authManager),
       routes: {
         '/newRecipe': (context) => NewRecipe(),
@@ -218,7 +222,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List widgets = [HomePage(voidCallback: refresh), const ProfilePage()];
+    List widgets = [HomePage(voidCallback: refresh), ExplorePage(), const ProfilePage()];
     return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: const Color.fromRGBO(245, 245, 245, 1),
@@ -237,6 +241,11 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.home_outlined),
               label: "Home",
               selectedIcon: Icon(Icons.home),
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              label: "explore",
+              selectedIcon: Icon(Icons.explore),
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline),
