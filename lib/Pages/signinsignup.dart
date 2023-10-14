@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:zushi_and_karrot/utils/app_lifecycle_reactor.dart';
 import 'package:zushi_and_karrot/utils/app_open_ad_manager.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +28,6 @@ class _LoginPageState extends State<LoginPage> {
     _appLifecycleReactor =
         AppLifecycleReactor(appOpenAdManager: appOpenAdManager);
     _appLifecycleReactor.listenToAppStateChanges();
-
-    
   }
 
   @override
@@ -165,6 +165,24 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Made by: "),
+                      TextButton(
+                          onPressed: () {
+                            launchUrl(
+                                Uri.https("github.com", '/forecaster-cyber'));
+                          },
+                          child: Text("Serge Brainin")),
+                          TextButton(
+                          onPressed: () {
+                            launchUrl(
+                                Uri.https("github.com", '/Dan-Arfi'));
+                          },
+                          child: Text("Dan Arfi"))
+                    ],
+                  )
                 ],
               )
             ],

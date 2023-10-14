@@ -248,7 +248,7 @@ class _MainScreenState extends State<MainScreen> {
               selectedIcon: Icon(Icons.home),
             ),
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
+              icon: Icon(Icons.explore_outlined),
               label: "explore",
               selectedIcon: Icon(Icons.explore),
             ),
