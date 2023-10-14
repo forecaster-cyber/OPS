@@ -19,15 +19,18 @@ String chosenRandomUser = "";
 bool chosen = false;
 List likedObjects = [];
 List posts_by_random_chosen_user = [];
+List category_foods_list = [];
 List names = [
-  'breakfast',
-  'dinner',
-  'lunch',
-  'breads',
-  'italian',
-  'mexaican',
-  'side dish',
-  'healthy'
+  'Italian',
+  'Chinese',
+  'Mexican',
+  'Japanese',
+  'Indian',
+  'American',
+  'Med.',
+  'French',
+  'Thai',
+  'Spanish'
 ];
 
 String greeting() {
@@ -41,7 +44,7 @@ String greeting() {
   return 'Evening';
 }
 
-List icons = ['🥞', '🍝', '🥙', '🍞', '🍕', '🌮', '🍟', '🥗'];
+List icons = ['🍝', '🍜', '🌮', '🍣', '🍛', '🍔', '🥙', '🥐', '🍛', '🥘'];
 List myPostsList = [];
 /*
 

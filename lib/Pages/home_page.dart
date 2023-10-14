@@ -12,8 +12,6 @@ import 'package:zushi_and_karrot/components/recipe_preview_componenet.dart';
 import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.voidCallback});
   final Future<void> Function() voidCallback;
@@ -96,78 +94,82 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: const EdgeInsets.only(right: 15.0, top: 15),
                   child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: BoringAvatars(
-                      name: extractUsername(emailll!), type: BoringAvatarsType.beam)),
+                      width: 50,
+                      height: 50,
+                      child: BoringAvatars(
+                          name: extractUsername(emailll!),
+                          type: BoringAvatarsType.beam)),
                 ),
               ],
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 30.0, left: 15, right: 15),
-            child: isLoading ? CircularProgressIndicator() : TextField(
-              controller: searchController,
-              onSubmitted: (value) async {
-                setState(() {
-                  isLoading = true;
-                });
-                final List data =
-                    await supabase.rpc('match_documents', params: {
-                  'query_embedding':
-                      await fetchOpenAIEmbeddings(searchController.text),
-                  'match_threshold': 0.5,
-                  'match_count': 2
-                });
-                print(data);
-                List objectsList_temp = [];
-                await supabase
-                    .from("recipesJsons")
-                    .select<PostgrestList>("JSON")
-                    .textSearch("created_by", searchController.text,
-                        type: TextSearchType.websearch)
-                    .then((value) {
-                  for (var element in data) {
-                    // print(element["JSON"]);
+            child: isLoading
+                ? CircularProgressIndicator()
+                : TextField(
+                    controller: searchController,
+                    onSubmitted: (value) async {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      final List data =
+                          await supabase.rpc('match_documents', params: {
+                        'query_embedding':
+                            await fetchOpenAIEmbeddings(searchController.text),
+                        'match_threshold': 0.5,
+                        'match_count': 2
+                      });
+                      print(data);
+                      List objectsList_temp = [];
+                      await supabase
+                          .from("recipesJsons")
+                          .select<PostgrestList>("JSON")
+                          .textSearch("created_by", searchController.text,
+                              type: TextSearchType.websearch)
+                          .then((value) {
+                        for (var element in data) {
+                          // print(element["JSON"]);
 
-                    Map<String, dynamic> decJson =
-                        jsonDecode(element["content"]);
-                    // print(decJson);
+                          Map<String, dynamic> decJson =
+                              jsonDecode(element["content"]);
+                          // print(decJson);
 
-                    objectsList_temp.add(decJson);
-                  }
-                  setState(() {
-                    isLoading = false;
-                  });
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SearchResultsPage(
-                            resultObjectslist: objectsList_temp,
-                            searchText: searchController.text)),
-                  );
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "search any recipes",
-                hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
-                prefixIcon: const Icon(Icons.search),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                filled: true,
-                fillColor: Colors.white,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      width: 3, color: Colors.transparent), //<-- SEE HERE
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(
-                      width: 3, color: Colors.transparent), //<-- SEE HERE
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-              ),
-            ),
+                          objectsList_temp.add(decJson);
+                        }
+                        setState(() {
+                          isLoading = false;
+                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchResultsPage(
+                                  resultObjectslist: objectsList_temp,
+                                  searchText: searchController.text)),
+                        );
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Search lots of recipes!",
+                      hintStyle:
+                          const TextStyle(color: Colors.black54, fontSize: 14),
+                      prefixIcon: const Icon(Icons.search),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 10),
+                      filled: true,
+                      fillColor: Colors.white,
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 3, color: Colors.transparent), //<-- SEE HERE
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                            width: 3, color: Colors.transparent), //<-- SEE HERE
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                    ),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 15.0),
@@ -199,18 +201,58 @@ class _HomePageState extends State<HomePage> {
                             ),
                             width: 75,
                             height: 75,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  icons[index],
-                                  style: TextStyle(fontSize: 28),
-                                ),
-                                Text(
-                                  names[index],
-                                  style: TextStyle(color: Colors.black54),
-                                )
-                              ],
+                            child: GestureDetector(
+                              onTap: () async {
+                                final q_embedding = await supabase
+                                    .from("categories")
+                                    .select<PostgrestList>("embedding")
+                                    .textSearch("category", names[index]);
+                                String final_q_embedding = '';
+                                for (var element in q_embedding) {
+                                  final_q_embedding = element['embedding'];
+                                }
+                                final List data = await supabase
+                                    .rpc('match_documents', params: {
+                                  'query_embedding': final_q_embedding,
+                                  'match_threshold': 0.5,
+                                  'match_count': 6
+                                });
+                                print(names[index]);
+                                for (var element in data) {
+                                  // print(element["JSON"]);
+
+                                  Map<String, dynamic> decJson =
+                                      jsonDecode(element["content"]);
+                                  // print(decJson);
+
+                                  category_foods_list.add(decJson);
+                                }
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SearchResultsPage(
+                                          resultObjectslist:
+                                              category_foods_list,
+                                          searchText: names[index])),
+                                );
+                                print(await supabase
+                                    .from("categories")
+                                    .select<PostgrestList>("embedding")
+                                    .textSearch("category", names[index]));
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    icons[index],
+                                    style: TextStyle(fontSize: 28),
+                                  ),
+                                  Text(
+                                    names[index],
+                                    style: TextStyle(color: Colors.black54),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -259,17 +301,25 @@ class _HomePageState extends State<HomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => RecipePage(
-                                              object: objectsList[index],
+                                              object: objectsList[
+                                                  objectsList.length -
+                                                      index -
+                                                      1],
                                             )),
                                   );
                                 },
                                 child: AspectRatio(
                                   aspectRatio: 1,
                                   child: RecipePreview(
-                                      createdBy: objectsList[index]
+                                      createdBy: objectsList[
+                                              objectsList.length - index - 1]
                                           ['created_by'],
-                                      imageUrl: objectsList[index]['image_url'],
-                                      title: objectsList[index]['recipe_name']),
+                                      imageUrl: objectsList[objectsList.length -
+                                          index -
+                                          1]['image_url'],
+                                      title: objectsList[objectsList.length -
+                                          index -
+                                          1]['recipe_name']),
                                 )),
                           );
                         },
@@ -278,8 +328,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 15.0, top: 15.0),
-                    child:  Text(
-                      "Recipes by " + extractUsername(chosenRandomUser) ,
+                    child: Text(
+                      "Recipes by " + '@' + extractUsername(chosenRandomUser),
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 24),
                     ),
@@ -307,17 +357,23 @@ class _HomePageState extends State<HomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => RecipePage(
-                                              object: posts_by_random_chosen_user[index],
+                                              object:
+                                                  posts_by_random_chosen_user[
+                                                      index],
                                             )),
                                   );
                                 },
                                 child: AspectRatio(
                                   aspectRatio: 1,
                                   child: RecipePreview(
-                                      createdBy: posts_by_random_chosen_user[index]
-                                          ['created_by'],
-                                      imageUrl: posts_by_random_chosen_user[index]['image_url'],
-                                      title: posts_by_random_chosen_user[index]['recipe_name']),
+                                      createdBy:
+                                          posts_by_random_chosen_user[index]
+                                              ['created_by'],
+                                      imageUrl:
+                                          posts_by_random_chosen_user[index]
+                                              ['image_url'],
+                                      title: posts_by_random_chosen_user[index]
+                                          ['recipe_name']),
                                 )),
                           );
                         },
