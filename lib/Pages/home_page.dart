@@ -214,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                                 final List data = await supabase
                                     .rpc('match_documents', params: {
                                   'query_embedding': final_q_embedding,
-                                  'match_threshold': 0.5,
+                                  'match_threshold': 0.75,
                                   'match_count': 6
                                 });
                                 print(names[index]);

@@ -102,6 +102,13 @@ Future<void> main() async {
   final String? savedPassword = prefs.getString('password');
   emailll = savedEmail;
   passowrdd = savedPassword;
+  setup_app();
+  emailController.text = emailll ?? "";
+  passwordController.text = passowrdd ?? "";
+  runApp(const MainApp());
+}
+
+void setup_app() async {
   final List listOfJsons =
       await supabase.from("recipesJsons").select<PostgrestList>("JSON");
   for (var element in listOfJsons) {
@@ -143,10 +150,6 @@ Future<void> main() async {
       chosen = false;
     }
   }
-
-  emailController.text = emailll ?? "";
-  passwordController.text = passowrdd ?? "";
-  runApp(const MainApp());
 }
 
 class MainApp extends StatefulWidget {
